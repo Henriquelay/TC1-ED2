@@ -1,0 +1,124 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Testa o trab com a entrada 1",
+            "type": "cppdbg",
+            
+            "request": "launch",
+            "program": "${workspaceFolder}/trab1",
+            "args": [
+                "${workspaceFolder}/in-exemplos/1.txt"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "MIMode": "gdb",
+            "externalConsole": false,
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc build project",
+            "miDebuggerPath": "/usr/bin/gdb",
+        },
+        {
+            "name": "Testa o trab com a entrada 2",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/trab1",
+            "args": [
+                "${fileDirname}/in-exemplos/2.txt"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "MIMode": "gdb",
+            "externalConsole": false,
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc build project",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "Testa o trab com a entrada 3",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/trab1",
+            "args": [
+                "${fileDirname}/in-exemplos/3.txt"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "MIMode": "gdb",
+            "externalConsole": false,
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc build project",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "Testa o trab com a entrada 4",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/trab1",
+            "args": [
+                "${fileDirname}/in-exemplos/4.txt"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "MIMode": "gdb",
+            "externalConsole": false,
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc build project",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "Testa o trab com a entrada 5",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/trab1",
+            "args": [
+                "${fileDirname}/in-exemplos/5.txt"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "MIMode": "gdb",
+            "externalConsole": false,
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc build project",
+            "miDebuggerPath": "/usr/bin/gdb"
+        }
+    ],
+}
