@@ -21,6 +21,7 @@ VALZAO_FLAGS ?= $(VAL_FLAGS) --show-leak-kinds=all
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS)
+	make clean
 
 # c source
 $(BUILD_DIR)/%.c.o: %.c
@@ -28,12 +29,12 @@ $(BUILD_DIR)/%.c.o: %.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 clean:
-	$(RM) $(TARGET_EXEC) */*.o
+	$(RM) */*.o */*.d
 
 
 valzin: $(TARGET_EXEC)
 	$(VALGRIND) $(VALZIN_FLAGS) $(TARGET_EXEC) $(ARGS)
-valzin: $(TARGET_EXEC)
+val: $(TARGET_EXEC)
 	$(VALGRIND) $(VAL_FLAGS) $(TARGET_EXEC) $(ARGS)
-valzin: $(TARGET_EXEC)
+valzao: $(TARGET_EXEC)
 	$(VALGRIND) $(VALZAO_FLAGS) $(TARGET_EXEC) $(ARGS)
