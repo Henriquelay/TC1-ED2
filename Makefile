@@ -17,7 +17,7 @@ CFLAGS ?= $(INC_FLAGS) -g -Wall -Werror -O4
 VALGRIND ?= valgrind
 VALZIN_FLAGS ?=
 VAL_FLAGS ?= $(VALZIN_FLAGS) --leak-check=full
-VALZAO_FLAGS ?= $(VAL_FLAGS) --show-leak-kinds=all
+VALZAO_FLAGS ?= $(VAL_FLAGS) --show-leak-kinds=all --track-origins=yes
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS)
