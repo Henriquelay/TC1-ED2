@@ -1,4 +1,4 @@
-#include "../headers/fileReader.h"
+#include "../lib/fileReader.h"
 
 /**
  * Opens file as readonly, checks for errors, exit if any errors, then returns
@@ -25,18 +25,20 @@ char closeFile(FILE* file) {
 
 /**
  * Returns how many tokens are in a like of input, including the identifier.
- * At the end, file pointer is after the first '\n' it encounters
  * Takes a buffer as input to avoid keep re-allocating memory
  * */
 size_t getLineSize(FILE* file, const char* separator, char* buffer, size_t* bufferSize) {
     size_t charsRead = 0;
+    fpos_t previousPosition;   // Stores previous position
+    fgetpos(file, &previousPosition);
     if ((charsRead = getline(&buffer, bufferSize, file)) == -1) {
         perror("Error getting new line. Exiting");
         exit(1);
     }
 
+    fsetpos(file, &previousPosition);  // Restores previous position
+
     size_t counter = 0;
-    printf("BUFSIZE = %lu\n", charsRead);
     for (int i = 0; i < charsRead; i++) {
         if (buffer[i] == *separator) {
             counter++;
@@ -70,5 +72,3 @@ char** readLine(FILE* file, const char* separator, char* buffer, size_t* bufferS
     }
     return tokens;
 }
-
-
