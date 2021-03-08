@@ -1,7 +1,7 @@
 TARGET_EXEC ?= trab1
 
 BUILD_DIR ?= .
-SRC_DIRS ?= ./src ./headers
+SRC_DIRS ?= ./src ./lib
 
 MKDIR_P ?= mkdir -p
 

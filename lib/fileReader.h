@@ -1,5 +1,6 @@
-// Auxiliary to read inputs and file input stats.
-
+/**
+ * This library is for manipulating inputs as decribed on the specification
+ * */
 #ifndef _FILEREADER_H_
 #define _FILEREADER_H_
 
