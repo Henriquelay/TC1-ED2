@@ -12,6 +12,7 @@ FILE* openFile(const char* fileName);
 char closeFile(FILE* file);
 
 size_t getLineSize(FILE* file, const char* separator, char* buffer, size_t* bufferSize);
+size_t countLines(FILE* file);
 char** readLine(FILE* file, const char* separator, char* buffer, size_t* bufferSize, size_t* tokenAmount);
 
 #endif
