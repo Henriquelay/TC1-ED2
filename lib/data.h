@@ -16,8 +16,14 @@
 
 #include "./fileReader.h"
 
-long double** loadData(FILE* file, const char* separator);
+typedef struct data_t {
+    void *** dataMatrix;
+    size_t i, j;
+} data_t;
 
-void printData(long double** data);
+
+data_t * loadData(FILE* file, const char* separator);
+
+void printData(const data_t* dataStruct);
 
 #endif

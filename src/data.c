@@ -1,45 +1,41 @@
 #include "../lib/data.h"
 
-long double** loadData(FILE* file, const char* separator) {
+data_t* loadData(FILE* file, const char* separator) {
     char buffer[5000];
     size_t bufferSize = 0;
 
-    size_t lineSize = getLineSize(file, separator, buffer, &bufferSize);
+    data_t* dataStruct = (data_t*)malloc(sizeof(data_t));
+    if (dataStruct == NULL) {
+        perror("Error allocating new dataStructure. Exiting");
+        exit(1);
+    };
 
-    size_t linesCount = countLines(file);
-    char*** dataLine = (char***)malloc(sizeof(char**) * linesCount);
-    if (dataLine == NULL) {
+    dataStruct->i = countLines(file);
+    dataStruct->j = getLineSize(file, separator, buffer, &bufferSize);
+
+
+    // 0 will always be id, read as `char*`.
+    dataStruct->dataMatrix = (void***)malloc(sizeof(void**) * dataStruct->i);
+    if (dataStruct->dataMatrix == NULL) {
         perror("Error allocating new dataString lines. Exiting");
         exit(1);
     }
-    for (int i = 0; i < linesCount; i++) {
-        dataLine[i] = (char**)malloc(sizeof(char*) * lineSize);
-        if (dataLine[i] == NULL) {
-            perror("Error allocating new dataString columns. Exiting");
-            exit(1);
-        }
+
+    // void** line = NULL;
+    for (int i = 0; i < dataStruct->i; i++) {
+        dataStruct->dataMatrix[i] = readLine(file, separator, buffer, &bufferSize, &dataStruct->j);
     }
 
-    printf("lineSize %lu linesCount %lu\n", lineSize, linesCount);
+    return dataStruct;
+}
 
-    for (int i = 0; i < linesCount; i++) {
-        char** line = readLine(file, separator, buffer, &bufferSize, &lineSize);
-        for (int j = 0; j < lineSize; j++) {
-            // printf("Copiando %s\n", line[j]);
-            dataLine[i][j] = (char*)malloc(sizeof(char) * ((strlen(line[j])) + 1));
-            if (dataLine[i][j] == NULL) {
-                perror("Error allocating new dataString cells. Exiting");
-                exit(1);
-            }
-            strcpy(dataLine[i][j], line[j]);
-        }
-    }
-
-    for (int i = 0; i < linesCount; i++) {
-        for (int j = 0; j < lineSize; j++) {
-            printf("%s ", dataLine[i][j]);
+void printData(const data_t *dataStruct) {
+    for (int i = 0; i < dataStruct->i; i++) {
+        printf("%s", (char*)dataStruct->dataMatrix[i][0]);
+        for (int j = 1; j < dataStruct->j; j++) {
+            printf(",%.15Lf", *((long double*)dataStruct->dataMatrix[i][j]));
         }
         puts("");
     }
-    return NULL;
 }
+

@@ -43,6 +43,8 @@ size_t getLineSize(FILE* file, const char* separator, char* buffer, size_t* buff
             counter++;
         }
     }
+    // Buffer is not used, delete it after reading content
+    free(buffer);
     return ++counter;
 }
 
@@ -68,14 +70,14 @@ size_t countLines(FILE* file) {
  * Takes an open file, returns an allocated struct with identifier and values
  * Takes a buffer as input to avoid keep re-allocating memory
  * */
-char** readLine(FILE* file, const char* separator, char* buffer, size_t* bufferSize, size_t* tokenAmount) {
+void** readLine(FILE* file, const char* separator, char* buffer, size_t* bufferSize, const size_t* tokenAmount) {
     if (getline(&buffer, bufferSize, file) == -1) {
         // perror("Error getting new line. Exiting");
         // exit(1);
         return NULL;
     }
 
-    char** tokens = (char**)malloc(sizeof(char*) * *tokenAmount);
+    void** tokens = (void**)malloc(sizeof(void*) * *tokenAmount);
     if (tokens == NULL) {
         perror("Error allocating tokens array");
         exit(1);
@@ -85,12 +87,28 @@ char** readLine(FILE* file, const char* separator, char* buffer, size_t* bufferS
     //continues scanning where a previous successful call to the function ended.
     char* token;
     unsigned int i = 0;
-    for (i = 0, token = strtok(buffer, separator); token != NULL && i < *tokenAmount; token = strtok(NULL, separator), i++) {
-        tokens[i] = token;
+    char* identifier = strtok(buffer, separator);
+    // Allocates space for identifies cell
+    tokens[0] = (char*)malloc(sizeof(char) * ((strlen(identifier)) + 1));
+    if (tokens[0] == NULL) {
+        perror("Error allocating new dataString cells. Exiting");
+        exit(1);
+    }
+    strcpy(tokens[0], identifier);
+
+    // NOTE - Try removing one of the checks for's second term to gain a bit of time if it works
+    for (i = 1, token = strtok(NULL, separator); token != NULL && i < *tokenAmount; token = strtok(NULL, separator), i++) {
+        // Allocates space for data cell
+        tokens[i] = (long double*)malloc(sizeof(long double));
+        if (tokens[i] == NULL) {
+            perror("Error allocating token cell value");
+            exit(1);
+        }
+        *((long double*)tokens[i]) = strtold(token, NULL);
     }
 
     // Remove trailing '\n'
-    size_t lastStringLen = strlen(tokens[--i]);
-    tokens[i][lastStringLen - 1] = '\0';
+    // size_t lastStringLen = strlen(tokens[--i]);
+    // tokens[i][lastStringLen - 1] = '\0';
     return tokens;
 }

@@ -11,7 +11,9 @@ int main(int argc, char** argv) {
     // }
     // puts("");
 
-    loadData(file, ",");
+    data_t* data = loadData(file, ",");
+
+    printData(data);
 
     // unsigned int k = atoi(argv[2]);
     // char* outputFile = argv[3];

@@ -13,6 +13,6 @@ char closeFile(FILE* file);
 
 size_t getLineSize(FILE* file, const char* separator, char* buffer, size_t* bufferSize);
 size_t countLines(FILE* file);
-char** readLine(FILE* file, const char* separator, char* buffer, size_t* bufferSize, size_t* tokenAmount);
+void** readLine(FILE* file, const char* separator, char* buffer, size_t* bufferSize, const size_t* tokenAmount);
 
 #endif
