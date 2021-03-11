@@ -15,9 +15,9 @@
 #define _DATA_H_
 
 #include "./fileReader.h"
+#include <math.h>
 
 typedef struct data_t {
-    // [0] is char* Identifier, [1...] is long double* feature;
     void*** dataMatrix;
     size_t i, j;
 } data_t;
@@ -25,6 +25,7 @@ typedef struct data_t {
 
 data_t* loadData(FILE* file, const char* separator);
 void printData(const data_t* dataStruct);
+data_t* getDistances(data_t* data);
 void destroyData(data_t* data);
 
 

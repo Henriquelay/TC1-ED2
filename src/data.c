@@ -1,9 +1,11 @@
 #include "../lib/data.h"
 
-void printData(const data_t *dataStruct) {
-    for (int i = 0; i < dataStruct->i; i++) {
+// TODO - Check if a Macro to derefence (*((long double*)b[i])) is viable
+
+void printData(const data_t* dataStruct) {
+    for (size_t i = 0; i < dataStruct->i; i++) {
         printf("%s", (char*)dataStruct->dataMatrix[i][0]);
-        for (int j = 1; j < dataStruct->j; j++) {
+        for (size_t j = 1; j < dataStruct->j; j++) {
             printf(",%.15Lf", *((long double*)dataStruct->dataMatrix[i][j]));
         }
         puts("");
@@ -12,8 +14,8 @@ void printData(const data_t *dataStruct) {
 
 // TODO check before freeing -- don't check whole array
 void destroyData(data_t* data) {
-    for(size_t i = 0; i < data->i; i++) {
-        for(size_t j = 0; j < data->j; j++){
+    for (size_t i = 0; i < data->i; i++) {
+        for (size_t j = 0; j < data->j; j++) {
             free(data->dataMatrix[i][j]);
         }
         free(data->dataMatrix[i]);
@@ -44,13 +46,65 @@ data_t* loadData(FILE* file, const char* separator) {
     }
 
     // void** line = NULL;
-    for (int i = 0; i < dataStruct->i; i++) {
+    for (size_t i = 0; i < dataStruct->i; i++) {
         dataStruct->dataMatrix[i] = readLine(file, separator, buffer, &bufferSize, &dataStruct->j);
     }
 
     return dataStruct;
 }
 
+long double distance(long double** a, long double** b, size_t dimensions) {
+    long double accumulator = 0;
+    for (size_t i = 1; i <= dimensions; i++) {
+        // printf("dim = %ld Val a = %Lf b = %Lf\n", dimensions, *a[i], *b[i]);
+        if ((*a[i]) < (*b[i])) {
+            accumulator += ((*b[i]) - (*a[i])) * ((*b[i]) - (*a[i]));
+        } else {
+            accumulator += ((*a[i]) - (*b[i])) * ((*a[i]) - (*b[i]));
+        }
+    }
+    // TODO Try using sqrtl. Defined in <tgmath.h>
+    return sqrt(accumulator);
+}
+
 data_t* getDistances(data_t* data) {
+    data_t* distances = (data_t*)malloc(sizeof(data_t));
+    if (distances == NULL) {
+        perror("Error allocating new distancesure. Exiting");
+        exit(1);
+    };
+
+    distances->i = data->i;
+    // Data has [0] as identifiers, won't be using for calculations;
+    distances->j = data->j - 1;
+    // 0 will always be id, read as `char*`.
+    distances->dataMatrix = (void***)malloc(sizeof(long double**) * distances->i);
+    if (distances->dataMatrix == NULL) {
+        perror("Error allocating new dataString lines. Exiting");
+        exit(1);
+    }
+
+
+    for (size_t i = 0; i < distances->i; i++) {
+        printf("Lin %ld\t", i);
+        distances->dataMatrix[i] = (void**)malloc(sizeof(void*) * i);
+        if (distances->dataMatrix[i] == NULL) {
+            perror("Error allocating new dataString lines on distances struct. Exiting");
+            exit(1);
+        }
+        for (size_t j = 0; j < i; j++) {
+            distances->dataMatrix[i][j] = (long double*)malloc(sizeof(long double));
+            if (distances->dataMatrix[i] == NULL) {
+                perror("Error allocating new dataString lines on distances struct. Exiting");
+                exit(1);
+            }
+            *((long double*)distances->dataMatrix[i][j]) = distance((long double**)data->dataMatrix[i], (long double**)data->dataMatrix[j], distances->j);
+            printf("%.2Lf\t", *((long double*)distances->dataMatrix[i][j]));
+        }
+        puts("");
+    }
+
+    // destroyData(distances);
+
     return NULL;
 }

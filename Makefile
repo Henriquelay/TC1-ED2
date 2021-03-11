@@ -20,7 +20,7 @@ VAL_FLAGS ?= $(VALZIN_FLAGS) --leak-check=full
 VALZAO_FLAGS ?= $(VAL_FLAGS) --show-leak-kinds=all --track-origins=yes
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
-	$(CC) $(OBJS) -o $@ $(LDFLAGS)
+	$(CC) $(OBJS) -o $@ -lm
 	make clean
 
 # c source
