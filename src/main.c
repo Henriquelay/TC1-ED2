@@ -12,11 +12,13 @@ int main(int argc, char** argv) {
     // puts("");
 
     data_t* data = loadData(file, ",");
+    closeFile(file);
 
     printData(data);
 
+    destroyData(data);
+
     // unsigned int k = atoi(argv[2]);
     // char* outputFile = argv[3];
-    closeFile(file);
     // free(tokens);
 }

@@ -23,6 +23,8 @@ char closeFile(FILE* file) {
     return fclose(file);
 }
 
+
+// TODO usar o getline esperamente para não precisar de getLineSize e countLines
 /**
  * Returns how many tokens are in a like of input, including the identifier.
  * Takes a buffer as input to avoid keep re-allocating memory
