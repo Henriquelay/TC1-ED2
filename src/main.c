@@ -18,6 +18,9 @@ int main(int argc, char** argv) {
 
     // printData(data);
 
+
+    vectorizeData(distances);
+
     destroyData(data);
 
     // unsigned int k = atoi(argv[2]);

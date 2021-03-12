@@ -14,19 +14,26 @@
 #ifndef _DATA_H_
 #define _DATA_H_
 
-#include "./fileReader.h"
 #include <math.h>
+#include "./fileReader.h"
+#include "./unionFind.h"
 
 typedef struct data_t {
     void*** dataMatrix;
     size_t i, j;
 } data_t;
 
+typedef struct dataVector_t {
+    long double* distance;
+    size_t i;
+    size_t j;
+} dataVector_t;
 
 data_t* loadData(FILE* file, const char* separator);
 void printData(const data_t* dataStruct);
 data_t* getDistances(data_t* data);
 void destroyData(data_t* data);
+dataVector_t* vectorizeData(data_t* data);
 
 
 #endif

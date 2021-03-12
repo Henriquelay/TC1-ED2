@@ -2,6 +2,7 @@
 #define _UNION_FIND_H_
 
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef struct union_t {
     size_t* array;

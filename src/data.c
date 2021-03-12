@@ -104,6 +104,41 @@ data_t* getDistances(data_t* data) {
     return distances;
 }
 
-data_t* kruskal(data_t* data) {
-    
+int compareDataVecs(const void* a, const void* b) {
+    if (*(((dataVector_t*)a)->distance) < *(((dataVector_t*)b)->distance)) return -1;
+    if (*(((dataVector_t*)a)->distance) > *(((dataVector_t*)b)->distance)) return 1;
+    return 0;
 }
+
+dataVector_t* vectorizeData(data_t* data) {
+    // It's a triangle
+    size_t cells = data->i * (data->i - 1) / 2;
+    dataVector_t* vector = (dataVector_t*)malloc(sizeof(dataVector_t) * cells);
+    if (vector == NULL) {
+        perror("Erro allocating dataVector. Exiting");
+        exit(1);
+    }
+
+    for (size_t i = 0, k = 0; i < data->i; i++) {
+        for (size_t j = 0; j < i; j++, k++) {
+            vector[k].distance = data->dataMatrix[i][j];
+            vector[k].i = i;
+            vector[k].j = j;
+        }
+    }
+
+    // Sorting on distances
+    qsort(vector, cells, sizeof(dataVector_t), &compareDataVecs);
+
+    // for (size_t i = 0; i < cells; i++) {
+    //     printf("%Lf ", *vector[i].distance);
+    // }
+    // puts("");
+
+    return vector;
+}
+
+// data_t* kruskal(data_t* data) {
+//     union_t* un = UF_init(data->i);
+// 
+// }
