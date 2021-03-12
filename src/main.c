@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
     data_t* data = loadData(file, ",");
     closeFile(file);
 
-    getDistances(data);
+    data_t* distances = getDistances(data);
 
     // printData(data);
 

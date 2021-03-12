@@ -86,7 +86,6 @@ data_t* getDistances(data_t* data) {
 
 
     for (size_t i = 0; i < distances->i; i++) {
-        printf("Lin %ld\t", i);
         distances->dataMatrix[i] = (void**)malloc(sizeof(void*) * i);
         if (distances->dataMatrix[i] == NULL) {
             perror("Error allocating new dataString lines on distances struct. Exiting");
@@ -99,12 +98,12 @@ data_t* getDistances(data_t* data) {
                 exit(1);
             }
             *((long double*)distances->dataMatrix[i][j]) = distance((long double**)data->dataMatrix[i], (long double**)data->dataMatrix[j], distances->j);
-            printf("%.2Lf\t", *((long double*)distances->dataMatrix[i][j]));
         }
-        puts("");
     }
 
-    // destroyData(distances);
+    return distances;
+}
 
-    return NULL;
+data_t* kruskal(data_t* data) {
+    
 }
