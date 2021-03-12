@@ -5,7 +5,8 @@
 
 typedef struct union_t {
     size_t* array;
-    size_t size;
+    size_t* size;
+    size_t arraySize;
 } union_t;
 
 union_t* UF_init(const size_t size);
