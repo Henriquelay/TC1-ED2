@@ -34,7 +34,7 @@ union_t* UF_destroy(union_t* unionStruct) {
 }
 
 // Return who is the ancestor
-int UF_find(union_t* unionStruct, size_t index) {
+size_t UF_find(union_t* unionStruct, size_t index) {
     while (unionStruct->array[index] != index) {
         unionStruct->array[index] = unionStruct->array[unionStruct->array[index]];
         index = unionStruct->array[index];
@@ -55,3 +55,9 @@ void UF_union(union_t* unionStruct, const size_t p, const size_t q) {
         unionStruct->size[i] += unionStruct->size[j];
     }
 }
+
+// void destroyUnion_t(union_t* unionStruct) {
+//     if(unionStruct != NULL) {
+//         for(size_t i = 0; i < unionStruct->arraySize;)
+//     }
+// }

@@ -2,6 +2,7 @@
 
 int main(int argc, char** argv) {
     char* filename = argv[1];
+    size_t K = strtoul(argv[2], NULL, 10);
     FILE* file = openFile(filename);
     // size_t tokenAmount = getLineSize(file, ",", buffer, &bufferSize);
     // char** tokens = readLine(file, ",", buffer, &bufferSize, &tokenAmount);
@@ -16,10 +17,10 @@ int main(int argc, char** argv) {
 
     data_t* distances = getDistances(data);
 
-    // printData(data);
+    printData(data);
 
 
-    vectorizeData(distances);
+    kruskal(vectorizeData(distances), K);
 
     destroyData(data);
 

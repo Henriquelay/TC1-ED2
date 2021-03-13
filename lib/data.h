@@ -23,10 +23,17 @@ typedef struct data_t {
     size_t i, j;
 } data_t;
 
-typedef struct dataVector_t {
+typedef struct dataVectorCell_t {
     long double* distance;
+    // I and J from the original matrix the vector is pointing to
     size_t i;
     size_t j;
+} dataVectorCell_t;
+
+typedef struct dataVector_t {
+    dataVectorCell_t* vec;
+    // Number of indexed in vec
+    size_t size;
 } dataVector_t;
 
 data_t* loadData(FILE* file, const char* separator);
@@ -34,6 +41,7 @@ void printData(const data_t* dataStruct);
 data_t* getDistances(data_t* data);
 void destroyData(data_t* data);
 dataVector_t* vectorizeData(data_t* data);
+union_t* kruskal(dataVector_t* dataVec, size_t K);
 
 
 #endif

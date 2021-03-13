@@ -105,21 +105,22 @@ data_t* getDistances(data_t* data) {
 }
 
 int compareDataVecs(const void* a, const void* b) {
-    if (*(((dataVector_t*)a)->distance) < *(((dataVector_t*)b)->distance)) return -1;
-    if (*(((dataVector_t*)a)->distance) > *(((dataVector_t*)b)->distance)) return 1;
+    if (*(((dataVectorCell_t*)a)->distance) < *(((dataVectorCell_t*)b)->distance)) return -1;
+    if (*(((dataVectorCell_t*)a)->distance) > *(((dataVectorCell_t*)b)->distance)) return 1;
     return 0;
 }
 
 dataVector_t* vectorizeData(data_t* data) {
     // It's a triangle
     size_t cells = data->i * (data->i - 1) / 2;
-    dataVector_t* vector = (dataVector_t*)malloc(sizeof(dataVector_t) * cells);
+    dataVectorCell_t* vector = (dataVectorCell_t*)malloc(sizeof(dataVectorCell_t) * cells);
     if (vector == NULL) {
         perror("Erro allocating dataVector. Exiting");
         exit(1);
     }
 
-    for (size_t i = 0, k = 0; i < data->i; i++) {
+    size_t k = 0;
+    for (size_t i = 0; i < data->i; i++) {
         for (size_t j = 0; j < i; j++, k++) {
             vector[k].distance = data->dataMatrix[i][j];
             vector[k].i = i;
@@ -128,17 +129,48 @@ dataVector_t* vectorizeData(data_t* data) {
     }
 
     // Sorting on distances
-    qsort(vector, cells, sizeof(dataVector_t), &compareDataVecs);
+    qsort(vector, cells, sizeof(dataVectorCell_t), &compareDataVecs);
+
+    dataVector_t* dataVec = (dataVector_t*)malloc(sizeof(dataVector_t));
+    if (dataVec == NULL) {
+        perror("Erro allocating dataVector. Exiting");
+        exit(1);
+    }
+
+    dataVec->vec = vector;
+    dataVec->size = k;
 
     // for (size_t i = 0; i < cells; i++) {
     //     printf("%Lf ", *vector[i].distance);
     // }
     // puts("");
 
-    return vector;
+    return dataVec;
 }
 
-// data_t* kruskal(data_t* data) {
-//     union_t* un = UF_init(data->i);
-// 
-// }
+union_t* kruskal(dataVector_t* dataVec, size_t groupsNumber) {
+    union_t* un = UF_init(dataVec->size);
+    size_t currentGroups = dataVec->size;
+    for (size_t i = 0; currentGroups != groupsNumber; i++, currentGroups--) {
+
+        printf("I=%ld if=%d ancestor[i]=%ld ancestor[j]=%ld\n", i, UF_find(un, dataVec->vec[i].i) != UF_find(un, dataVec->vec[i].j), UF_find(un, dataVec->vec[i].i), UF_find(un, dataVec->vec[i].j));
+
+        if (UF_find(un, dataVec->vec[i].i) != UF_find(un, dataVec->vec[i].j)) {
+            UF_union(un, UF_find(un, dataVec->vec[i].i), UF_find(un, dataVec->vec[i].j));
+        }
+    }
+    puts("\nFinal");
+    for (size_t i = 0; i < dataVec->size; i++) {
+        printf("%ld %ld | ", dataVec->vec[i].i, dataVec->vec[i].j);
+    }
+
+    // puts("\nRemovendo os 3 maiores");
+
+    // for(size_t i = un->size - 1; i > un->size - 3; i--) {
+    //     free(un->array);
+    //     free(un->arraySize);
+    // }
+    // un->size = un->size - 3;
+
+    return un;
+}
