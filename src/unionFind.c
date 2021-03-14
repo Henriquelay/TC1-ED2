@@ -1,6 +1,6 @@
 #include "../lib/unionFind.h"
 
-union_t* UF_init(const size_t size) {
+union_t* UF_init(const size_t size, void** elemArray) {
     union_t* newStruct = (union_t*)malloc(sizeof(union_t));
     if (newStruct == NULL) {
         perror("Error allocating unionFind struct. Exiting");
@@ -22,6 +22,7 @@ union_t* UF_init(const size_t size) {
     for (size_t i = 0;i < size;i++) {
         newStruct->array[i] = i;
         newStruct->size[i] = 1;
+        newStruct->elem = elemArray[i];
     }
 
     return newStruct;
@@ -55,9 +56,3 @@ void UF_union(union_t* unionStruct, const size_t p, const size_t q) {
         unionStruct->size[i] += unionStruct->size[j];
     }
 }
-
-// void destroyUnion_t(union_t* unionStruct) {
-//     if(unionStruct != NULL) {
-//         for(size_t i = 0; i < unionStruct->arraySize;)
-//     }
-// }
