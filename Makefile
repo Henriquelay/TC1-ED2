@@ -11,13 +11,13 @@ OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-CPPFLAGS ?= $(INC_FLAGS) -MMD -MP
-CFLAGS ?= $(INC_FLAGS) -g -Wall -Werror -O4
+CC = gcc
+CFLAGS ?= $(INC_FLAGS) -pedantic -g -Wall -Werror -Wwrite-strings
 
 VALGRIND ?= valgrind
 VALZIN_FLAGS ?=
-VAL_FLAGS ?= $(VALZIN_FLAGS) --leak-check=full
-VALZAO_FLAGS ?= $(VAL_FLAGS) --show-leak-kinds=all --track-origins=yes
+VAL_FLAGS ?= $(VALZIN_FLAGS) --leak-check=full --track-origins=yes
+VALZAO_FLAGS ?= $(VAL_FLAGS) --show-leak-kinds=all
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 	$(CC) $(OBJS) -o $@ -lm
@@ -26,7 +26,7 @@ $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 # c source
 $(BUILD_DIR)/%.c.o: %.c
 	$(MKDIR_P) $(dir $@)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	$(RM) */*.o */*.d
