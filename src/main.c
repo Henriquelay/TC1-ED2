@@ -1,8 +1,10 @@
 #include "../lib/data.h"
 
+#define SEPARATOR ","
+
 int main(int argc, char** argv) {
     char* filename = argv[1];
-    size_t K = strtoul(argv[2], NULL, 10);
+    // size_t K = strtoul(argv[2], NULL, 10);
     FILE* file = openFile(filename);
     // size_t tokenAmount = getLineSize(file, ",", buffer, &bufferSize);
     // char** tokens = readLine(file, ",", buffer, &bufferSize, &tokenAmount);
@@ -12,19 +14,23 @@ int main(int argc, char** argv) {
     // }
     // puts("");
 
-    data_t* data = loadData(file, ",");
+    dataSet_t* data = loadData(file, SEPARATOR);
     closeFile(file);
 
-    data_t* distances = getDistances(data);
+    puts("Loaded data:");
+    printDataSet(data);
 
-    printData(data);
+    // data_t* distances = getDistances(data);
+    // puts("Distances matrix:");
+    // printDistanceMatrix(distances);
 
+    // dataVector_t* dataVec = vectorizeData(distances, data);
+    // puts("Vectorized data:");
+    // printVectorizedData(dataVec);
 
-    kruskal(vectorizeData(distances), K);
+    // kruskal(dataVec, K, data);
 
-    destroyData(data);
+    destroyDataSet(data);
 
-    // unsigned int k = atoi(argv[2]);
     // char* outputFile = argv[3];
-    // free(tokens);
 }

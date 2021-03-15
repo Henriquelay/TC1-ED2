@@ -1,5 +1,5 @@
 /**
-    * This library is for correcly handling the data structure defined for this project.
+    * This library is for correcly handling the data structures defined for this project.
 **/
 
 /**
@@ -14,34 +14,30 @@
 #ifndef _DATA_H_
 #define _DATA_H_
 
+#define _GNU_SOURCE // Needed to use qsort_r when not using c11 or gnu89/gnu99
 #include <math.h>
+
 #include "./fileReader.h"
 #include "./unionFind.h"
 
-typedef struct data_t {
-    void*** dataMatrix;
-    size_t i, j;
-} data_t;
+// "Rows"
+typedef struct sample {
+    char* id;
+    long double* features;
+} sample_t;
 
-typedef struct dataVectorCell_t {
-    long double* distance;
-    // I and J from the original matrix the vector is pointing to
-    size_t i;
-    size_t j;
-} dataVectorCell_t;
+// "Lines" of rows
+typedef struct dataSet {
+    size_t nElements;
+    size_t nFeatures;
+    sample_t* samples;
+} dataSet_t;
 
-typedef struct dataVector_t {
-    dataVectorCell_t* vec;
-    // Number of indexed in vec
-    size_t size;
-} dataVector_t;
 
-data_t* loadData(FILE* file, const char* separator);
-void printData(const data_t* dataStruct);
-data_t* getDistances(data_t* data);
-void destroyData(data_t* data);
-dataVector_t* vectorizeData(data_t* data);
-union_t* kruskal(dataVector_t* dataVec, size_t K);
-
+dataSet_t* loadData(FILE* file, const char *separator);
+void printSample(const sample_t* sample, const size_t* nFeatures);
+void printDataSet(dataSet_t* dataSet);
+void destroySample(sample_t* sample);
+void destroyDataSet(dataSet_t* dataSet);
 
 #endif
