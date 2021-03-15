@@ -1,4 +1,4 @@
-#include "../lib/fileReader.h"
+#include "../lib/file.h"
 
 /**
  * Opens file as readonly, checks for errors, exit if any errors, then returns

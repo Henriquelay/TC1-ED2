@@ -2,31 +2,32 @@
 
 #define BUFSIZE 1500
 
-dataSet_t* loadData(FILE* file, const char* separator) {
-    char buffer[BUFSIZE];
-    size_t bufferSize = BUFSIZE;
-
+dataSet_t* initDataSet(size_t nFeatures, size_t nElements) {
     dataSet_t* dataSet = (dataSet_t*)malloc(sizeof(dataSet_t));
     if (dataSet == NULL) {
         perror("Error allocating new dataSet. Exiting");
         exit(1);
     };
-
-    dataSet->nFeatures = getLineSize(file, *separator, buffer, &bufferSize);
-    dataSet->nElements = countLines(file);
-
-
-    // 0 will always be id, read as `char*`.
+    dataSet->nFeatures = nFeatures;
+    dataSet->nElements = nElements;
     dataSet->samples = (sample_t*)malloc(sizeof(sample_t) * dataSet->nElements);
     if (dataSet->samples == NULL) {
         perror("Error allocating new samples. Exiting");
         exit(1);
     }
+    return dataSet;
+}
 
-    // void** line = NULL;
+dataSet_t* loadData(FILE* file, const char* separator) {
+    char buffer[BUFSIZE];
+    size_t bufferSize = BUFSIZE;
+
+    dataSet_t* dataSet = initDataSet(getLineSize(file, *separator, buffer, &bufferSize), countLines(file));
+
     for (size_t i = 0; i < dataSet->nElements; i++) {
         char** line = readLine(file, separator, buffer, &bufferSize, &dataSet->nFeatures);
         dataSet->samples[i].id = line[0];
+        dataSet->samples[i].index = i;
         dataSet->samples[i].features = (long double*)malloc(sizeof(long double) * dataSet->nFeatures);
         if (dataSet->samples == NULL) {
             perror("Error allocating features for new sample. Exiting");
@@ -34,7 +35,7 @@ dataSet_t* loadData(FILE* file, const char* separator) {
         }
         for (size_t j = 0; j < dataSet->nFeatures; j++) {
             dataSet->samples[i].features[j] = strtold(line[j + 1], NULL);
-            free(line[j+1]);
+            free(line[j + 1]);
         }
         free(line);
     }
@@ -43,9 +44,10 @@ dataSet_t* loadData(FILE* file, const char* separator) {
 }
 
 void printSample(const sample_t* sample, const size_t* nFeatures) {
-    printf("%s", sample->id);
+    printf("%s:", sample->id);
     for (size_t j = 0; j < *nFeatures; j++) {
-        printf(",%Lf", sample->features[j]);
+        // printf("\t[%ld]", j);
+        printf("\t%Lf", sample->features[j]);
     }
     puts("");
 }
@@ -56,15 +58,18 @@ void printDataSet(dataSet_t* dataSet) {
     }
 }
 
+// Does not free IDs
 void destroySample(sample_t* sample) {
     free(sample->features);
-    free(sample->id);
+    sample = NULL;
 }
 
+// Does not free IDs
 void destroyDataSet(dataSet_t* dataSet) {
     for (size_t i = 0; i < dataSet->nElements; i++) {
         destroySample(&dataSet->samples[i]);
     }
     free(dataSet->samples);
     free(dataSet);
+    dataSet = NULL;
 }

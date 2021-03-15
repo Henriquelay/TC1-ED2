@@ -1,10 +1,11 @@
-#include "../lib/data.h"
+#include "../lib/distances.h"
+#include "../lib/graph.h"
 
 #define SEPARATOR ","
 
 int main(int argc, char** argv) {
     char* filename = argv[1];
-    // size_t K = strtoul(argv[2], NULL, 10);
+    size_t K = strtoul(argv[2], NULL, 10);
     FILE* file = openFile(filename);
     // size_t tokenAmount = getLineSize(file, ",", buffer, &bufferSize);
     // char** tokens = readLine(file, ",", buffer, &bufferSize, &tokenAmount);
@@ -14,23 +15,29 @@ int main(int argc, char** argv) {
     // }
     // puts("");
 
-    dataSet_t* data = loadData(file, SEPARATOR);
+    dataSet_t* dataPlot = loadData(file, SEPARATOR);
     closeFile(file);
 
-    puts("Loaded data:");
-    printDataSet(data);
+    puts("Loaded dataPlot:");
+    printDataSet(dataPlot);
 
-    // data_t* distances = getDistances(data);
-    // puts("Distances matrix:");
-    // printDistanceMatrix(distances);
+    // FIXME printing B: in in on first line
+    distanceDataSet_t* distanceSet = calculateDistances(dataPlot);
+    puts("Loaded distanceSet:");
+    printDistanceSet(distanceSet);
 
-    // dataVector_t* dataVec = vectorizeData(distances, data);
-    // puts("Vectorized data:");
-    // printVectorizedData(dataVec);
+    union_t * MST = kruskal(distanceSet, K);
 
-    // kruskal(dataVec, K, data);
 
-    destroyDataSet(data);
+    // Freeing ids here...
+    for (size_t i = 0; i < dataPlot->nElements; i++) {
+        free(dataPlot->samples[i].id);
+    }
+    // ...because these doesn't free ID's, they reuse the same address
+    destroyDataSet(dataPlot);
+    destroyDistanceDataSet(distanceSet);
+    UF_destroy(MST);
+
 
     // char* outputFile = argv[3];
 }

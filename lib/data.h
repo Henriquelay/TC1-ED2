@@ -14,27 +14,24 @@
 #ifndef _DATA_H_
 #define _DATA_H_
 
-#define _GNU_SOURCE // Needed to use qsort_r when not using c11 or gnu89/gnu99
-#include <math.h>
-
-#include "./fileReader.h"
-#include "./unionFind.h"
+#include "./file.h"
 
 // "Rows"
-typedef struct sample {
+typedef struct sample_t {
     char* id;
     long double* features;
+    size_t index;
 } sample_t;
 
 // "Lines" of rows
-typedef struct dataSet {
+typedef struct dataSet_t {
     size_t nElements;
     size_t nFeatures;
     sample_t* samples;
 } dataSet_t;
 
-
-dataSet_t* loadData(FILE* file, const char *separator);
+dataSet_t* initDataSet(size_t nFeatures, size_t nElements);
+dataSet_t* loadData(FILE* file, const char* separator);
 void printSample(const sample_t* sample, const size_t* nFeatures);
 void printDataSet(dataSet_t* dataSet);
 void destroySample(sample_t* sample);

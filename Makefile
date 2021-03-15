@@ -31,6 +31,8 @@ $(BUILD_DIR)/%.c.o: %.c
 clean:
 	$(RM) */*.o */*.d
 
+run: $(TARGET_EXEC)
+	$(BUILD_DIR)/$(TARGET_EXEC) $(ARGS)
 
 valzin: $(TARGET_EXEC)
 	$(VALGRIND) $(VALZIN_FLAGS) $(FLAGS) $(BUILD_DIR)/$(TARGET_EXEC) $(ARGS)
