@@ -11,7 +11,6 @@
 
 // "Rows"
 typedef struct distanceSample_t {
-    char* id;
     long double distance;
     // On distanceSet
     sample_t  *from, *to;

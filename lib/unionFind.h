@@ -11,7 +11,7 @@ typedef struct union_t {
     // Array of sizes to calculate weight and balance the insertion
     size_t* size;
     // Tie-in to elem
-    distanceSample_t *sample;
+    distanceSample_t *samples;
 } union_t;
 
 union_t* UF_init(const size_t size, distanceSample_t* samples);

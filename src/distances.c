@@ -41,7 +41,6 @@ distanceDataSet_t* calculateDistances(dataSet_t* locationSet) {
         for (size_t j = 0; j < i; j++, count++) {
             distanceSet->samples[count].from = &locationSet->samples[i];
             distanceSet->samples[count].to = &locationSet->samples[j];
-            printf("Calculating distance from %ld to %ld, which are %s and %s\n", i, j, locationSet->samples[i].id, locationSet->samples[j].id);
             distanceSet->samples[count].distance = euclidianDistance(locationSet->samples[i].features, locationSet->samples[j].features, &locationSet->nFeatures);
         }
     }

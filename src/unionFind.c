@@ -21,7 +21,7 @@ union_t* UF_init(const size_t size, distanceSample_t* samples) {
     for (size_t i = 0; i < size; i++) {
         newStruct->array[i] = i;
         newStruct->size[i] = 1;
-        newStruct->sample = &samples[i];
+        newStruct->samples = samples;
     }
 
     return newStruct;
