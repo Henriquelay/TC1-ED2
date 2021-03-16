@@ -4,19 +4,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-typedef struct union_t {
-    size_t* array;
-    // Array of sizes to calculate weight and balance the insertion
-    size_t* size;
-    // Number of elements on array
-    size_t arraySize;
-    // Tie-in to elem
-    void *elem;
-} union_t;
+#include "distances.h"
 
-union_t* UF_init(const size_t size, void** elemArray);
-union_t* UF_destroy(union_t* unionStruct);
-size_t UF_find(union_t* unionStruct, size_t index);
-void UF_union(union_t* unionStruct, const size_t p, const size_t q);
+typedef struct unionCell_t {
+    struct unionCell_t* root;
+    size_t size, id;
+    distanceSample_t* sample;
+} unionCell_t;
+
+unionCell_t* UF_init(const size_t size, distanceSample_t* samples);
+void UF_destroy(unionCell_t* unionStruct);
+unionCell_t* UF_find(unionCell_t* unionStruct);
+char UF_union(unionCell_t* p, unionCell_t* q);
 
 #endif

@@ -1,30 +1,39 @@
 #include "../lib/data.h"
+#include "../lib/distances.h"
+#include "../lib/unionFind.h"
+#include "../lib/graph.h"
+
+#define SEPARATOR ","
 
 int main(int argc, char** argv) {
     char* filename = argv[1];
+    dataSet_t* dataPlot = loadData(filename, SEPARATOR);
+    // puts("Loaded dataPlot:");
+    // printDataSet(dataPlot);
+
+    distanceDataSet_t* distanceSet = calculateDistances(dataPlot);
+    // puts("Loaded distanceSet:");
+    // printDistanceSet(distanceSet);
+
     size_t K = strtoul(argv[2], NULL, 10);
-    FILE* file = openFile(filename);
-    // size_t tokenAmount = getLineSize(file, ",", buffer, &bufferSize);
-    // char** tokens = readLine(file, ",", buffer, &bufferSize, &tokenAmount);
+    unionCell_t *samples;
+    unionCell_t * MST = MST_kruskal(distanceSet, &K, &samples, dataPlot);
+    // puts("Kruskelated:");
 
-    // for (int i = 0; i < tokenAmount; i++) {
-    //     printf("%s ", tokens[i]);
-    // }
-    // puts("");
-
-    data_t* data = loadData(file, ",");
-    closeFile(file);
-
-    data_t* distances = getDistances(data);
-
-    printData(data);
+    char* outputFile = argv[3];
+    printOutput(outputFile, MST, dataPlot, &dataPlot->nElements);
+    // puts("Printered:");
 
 
-    kruskal(vectorizeData(distances), K);
+    // Freeing string identificators here...
+    for (size_t i = 0; i < dataPlot->nElements; i++) {
+        free(dataPlot->samples[i].id);
+    }
+    // ...because these doesn't free ID's, the structures reuse the same address
+    destroyDataSet(dataPlot);
+    destroyDistanceDataSet(distanceSet);
+    UF_destroy(samples);
+    UF_destroy(MST);
 
-    destroyData(data);
-
-    // unsigned int k = atoi(argv[2]);
-    // char* outputFile = argv[3];
-    // free(tokens);
+    // puts("Freed. Bye.");
 }

@@ -1,58 +1,47 @@
 #include "../lib/unionFind.h"
 
-union_t* UF_init(const size_t size, void** elemArray) {
-    union_t* newStruct = (union_t*)malloc(sizeof(union_t));
+unionCell_t* UF_init(const size_t size, distanceSample_t* samples) {
+    unionCell_t* newStruct = (unionCell_t*)malloc(sizeof(unionCell_t) * size);
     if (newStruct == NULL) {
         perror("Error allocating unionFind struct. Exiting");
         exit(1);
     }
 
-    newStruct->arraySize = size;
-    newStruct->array = (size_t*)malloc(sizeof(size_t) * newStruct->arraySize);
-    if (newStruct->array == NULL) {
-        perror("Error allocating unionFind array. Exiting");
-        exit(1);
-    }
-    newStruct->size = (size_t*)malloc(sizeof(size_t) * newStruct->arraySize);
-    if (newStruct->size == NULL) {
-        perror("Error allocating unionFind ranks array. Exiting");
-        exit(1);
-    }
-
-    for (size_t i = 0;i < size;i++) {
-        newStruct->array[i] = i;
-        newStruct->size[i] = 1;
-        newStruct->elem = elemArray[i];
+    for (size_t i = 0; i < size; i++) {
+        newStruct[i].root = NULL;
+        newStruct[i].size = 1;
+        newStruct[i].id = i;
+        newStruct[i].sample = &samples[i];
     }
 
     return newStruct;
 }
 
-union_t* UF_destroy(union_t* unionStruct) {
-    free(unionStruct->array);
+void UF_destroy(unionCell_t* unionStruct) {
     free(unionStruct);
-    return NULL;
+    unionStruct = NULL;
 }
 
-// Return who is the ancestor
-size_t UF_find(union_t* unionStruct, size_t index) {
-    while (unionStruct->array[index] != index) {
-        unionStruct->array[index] = unionStruct->array[unionStruct->array[index]];
-        index = unionStruct->array[index];
+// Return the ancestor
+unionCell_t* UF_find(unionCell_t* unionCell) {
+    while (unionCell->root != NULL) {
+        // unionStruct[index].root = unionStruct[unionStruct[index].root].root;
+        unionCell = unionCell->root;
     }
-    return index;
+    return unionCell;
 }
 
 // Joins 2 elements
-void UF_union(union_t* unionStruct, const size_t p, const size_t q) {
-    size_t i = UF_find(unionStruct, p);
-    size_t j = UF_find(unionStruct, q);
-    if (i == j) return;
-    if (i < j) {
-        unionStruct->array[i] = j;
-        unionStruct->size[j] += unionStruct->size[i];
+char UF_union(unionCell_t*  p, unionCell_t* q) {
+    p = UF_find(p);
+    q = UF_find(q);
+    if (p == q) return 0;
+    if (p->size < q->size) {
+        p->root = q;
+        q->size += p->size;
     } else {
-        unionStruct->array[j] = i;
-        unionStruct->size[i] += unionStruct->size[j];
+        q->root = p;
+        p->size += q->size;
     }
+    return 1;
 }

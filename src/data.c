@@ -1,176 +1,77 @@
 #include "../lib/data.h"
 
-// TODO - Check if a Macro to derefence (*((long double*)b[i])) is viable
+#define BUFSIZE 1500
 
-void printData(const data_t* dataStruct) {
-    for (size_t i = 0; i < dataStruct->i; i++) {
-        printf("%s", (char*)dataStruct->dataMatrix[i][0]);
-        for (size_t j = 1; j < dataStruct->j; j++) {
-            printf(",%.15Lf", *((long double*)dataStruct->dataMatrix[i][j]));
-        }
-        puts("");
-    }
-}
-
-// TODO check before freeing -- don't check whole array
-void destroyData(data_t* data) {
-    for (size_t i = 0; i < data->i; i++) {
-        for (size_t j = 0; j < data->j; j++) {
-            free(data->dataMatrix[i][j]);
-        }
-        free(data->dataMatrix[i]);
-    }
-    free(data->dataMatrix);
-    free(data);
-}
-
-data_t* loadData(FILE* file, const char* separator) {
-    char buffer[5000];
-    size_t bufferSize = 0;
-
-    data_t* dataStruct = (data_t*)malloc(sizeof(data_t));
-    if (dataStruct == NULL) {
-        perror("Error allocating new dataStructure. Exiting");
+dataSet_t* initDataSet(size_t nFeatures, size_t nElements) {
+    dataSet_t* dataSet = (dataSet_t*)malloc(sizeof(dataSet_t));
+    if (dataSet == NULL) {
+        perror("Error allocating new dataSet. Exiting");
         exit(1);
     };
-
-    dataStruct->i = countLines(file);
-    dataStruct->j = getLineSize(file, separator, buffer, &bufferSize);
-
-
-    // 0 will always be id, read as `char*`.
-    dataStruct->dataMatrix = (void***)malloc(sizeof(void**) * dataStruct->i);
-    if (dataStruct->dataMatrix == NULL) {
-        perror("Error allocating new dataString lines. Exiting");
+    dataSet->nFeatures = nFeatures;
+    dataSet->nElements = nElements;
+    dataSet->samples = (sample_t*)malloc(sizeof(sample_t) * dataSet->nElements);
+    if (dataSet->samples == NULL) {
+        perror("Error allocating new samples. Exiting");
         exit(1);
     }
-
-    // void** line = NULL;
-    for (size_t i = 0; i < dataStruct->i; i++) {
-        dataStruct->dataMatrix[i] = readLine(file, separator, buffer, &bufferSize, &dataStruct->j);
-    }
-
-    return dataStruct;
+    return dataSet;
 }
 
-long double distance(long double** a, long double** b, size_t dimensions) {
-    long double accumulator = 0;
-    for (size_t i = 1; i <= dimensions; i++) {
-        // printf("dim = %ld Val a = %Lf b = %Lf\n", dimensions, *a[i], *b[i]);
-        if ((*a[i]) < (*b[i])) {
-            accumulator += ((*b[i]) - (*a[i])) * ((*b[i]) - (*a[i]));
-        } else {
-            accumulator += ((*a[i]) - (*b[i])) * ((*a[i]) - (*b[i]));
-        }
-    }
-    // TODO Try using sqrtl. Defined in <tgmath.h>
-    return sqrt(accumulator);
-}
+dataSet_t* loadData(char* filename, const char* separator) {
+    FILE* file = openFile(filename, "r");
+    char buffer[BUFSIZE];
+    size_t bufferSize = BUFSIZE;
 
-data_t* getDistances(data_t* data) {
-    data_t* distances = (data_t*)malloc(sizeof(data_t));
-    if (distances == NULL) {
-        perror("Error allocating new distancesure. Exiting");
-        exit(1);
-    };
+    dataSet_t* dataSet = initDataSet(getLineSize(file, *separator, buffer, &bufferSize), countLines(file));
 
-    distances->i = data->i;
-    // Data has [0] as identifiers, won't be using for calculations;
-    distances->j = data->j - 1;
-    // 0 will always be id, read as `char*`.
-    distances->dataMatrix = (void***)malloc(sizeof(long double**) * distances->i);
-    if (distances->dataMatrix == NULL) {
-        perror("Error allocating new dataString lines. Exiting");
-        exit(1);
-    }
-
-
-    for (size_t i = 0; i < distances->i; i++) {
-        distances->dataMatrix[i] = (void**)malloc(sizeof(void*) * i);
-        if (distances->dataMatrix[i] == NULL) {
-            perror("Error allocating new dataString lines on distances struct. Exiting");
+    for (size_t i = 0; i < dataSet->nElements; i++) {
+        char** line = readLine(file, separator, buffer, &bufferSize, &dataSet->nFeatures);
+        dataSet->samples[i].id = line[0];
+        dataSet->samples[i].index = i;
+        dataSet->samples[i].features = (long double*)malloc(sizeof(long double) * dataSet->nFeatures);
+        if (dataSet->samples == NULL) {
+            perror("Error allocating features for new sample. Exiting");
             exit(1);
         }
-        for (size_t j = 0; j < i; j++) {
-            distances->dataMatrix[i][j] = (long double*)malloc(sizeof(long double));
-            if (distances->dataMatrix[i] == NULL) {
-                perror("Error allocating new dataString lines on distances struct. Exiting");
-                exit(1);
-            }
-            *((long double*)distances->dataMatrix[i][j]) = distance((long double**)data->dataMatrix[i], (long double**)data->dataMatrix[j], distances->j);
+        for (size_t j = 0; j < dataSet->nFeatures; j++) {
+            dataSet->samples[i].features[j] = strtold(line[j + 1], NULL);
+            free(line[j + 1]);
         }
+        free(line);
     }
+    closeFile(file);
 
-    return distances;
+    return dataSet;
 }
 
-int compareDataVecs(const void* a, const void* b) {
-    if (*(((dataVectorCell_t*)a)->distance) < *(((dataVectorCell_t*)b)->distance)) return -1;
-    if (*(((dataVectorCell_t*)a)->distance) > *(((dataVectorCell_t*)b)->distance)) return 1;
-    return 0;
+void printSample(const sample_t* sample, const size_t* nFeatures) {
+    //printf("%s:", sample->id);
+    for (size_t j = 0; j < *nFeatures; j++) {
+        // printf("\t[%ld]", j);
+        //printf("\t%Lf", sample->features[j]);
+    }
+    //puts("");
 }
 
-dataVector_t* vectorizeData(data_t* data) {
-    // It's a triangle
-    size_t cells = data->i * (data->i - 1) / 2;
-    dataVectorCell_t* vector = (dataVectorCell_t*)malloc(sizeof(dataVectorCell_t) * cells);
-    if (vector == NULL) {
-        perror("Erro allocating dataVector. Exiting");
-        exit(1);
+void printDataSet(dataSet_t* dataSet) {
+    for (size_t i = 0; i < dataSet->nElements; i++) {
+        printSample(&dataSet->samples[i], &dataSet->nFeatures);
     }
-
-    size_t k = 0;
-    for (size_t i = 0; i < data->i; i++) {
-        for (size_t j = 0; j < i; j++, k++) {
-            vector[k].distance = data->dataMatrix[i][j];
-            vector[k].i = i;
-            vector[k].j = j;
-        }
-    }
-
-    // Sorting on distances
-    qsort(vector, cells, sizeof(dataVectorCell_t), &compareDataVecs);
-
-    dataVector_t* dataVec = (dataVector_t*)malloc(sizeof(dataVector_t));
-    if (dataVec == NULL) {
-        perror("Erro allocating dataVector. Exiting");
-        exit(1);
-    }
-
-    dataVec->vec = vector;
-    dataVec->size = k;
-
-    // for (size_t i = 0; i < cells; i++) {
-    //     printf("%Lf ", *vector[i].distance);
-    // }
-    // puts("");
-
-    return dataVec;
 }
 
-union_t* kruskal(dataVector_t* dataVec, size_t groupsNumber) {
-    union_t* un = UF_init(dataVec->size);
-    size_t currentGroups = dataVec->size;
-    for (size_t i = 0; currentGroups != groupsNumber; i++, currentGroups--) {
+// Does not free IDs
+void destroySample(sample_t* sample) {
+    free(sample->features);
+    sample = NULL;
+}
 
-        printf("I=%ld if=%d ancestor[i]=%ld ancestor[j]=%ld\n", i, UF_find(un, dataVec->vec[i].i) != UF_find(un, dataVec->vec[i].j), UF_find(un, dataVec->vec[i].i), UF_find(un, dataVec->vec[i].j));
-
-        if (UF_find(un, dataVec->vec[i].i) != UF_find(un, dataVec->vec[i].j)) {
-            UF_union(un, UF_find(un, dataVec->vec[i].i), UF_find(un, dataVec->vec[i].j));
-        }
+// Does not free IDs
+void destroyDataSet(dataSet_t* dataSet) {
+    for (size_t i = 0; i < dataSet->nElements; i++) {
+        destroySample(&dataSet->samples[i]);
     }
-    puts("\nFinal");
-    for (size_t i = 0; i < dataVec->size; i++) {
-        printf("%ld %ld | ", dataVec->vec[i].i, dataVec->vec[i].j);
-    }
-
-    // puts("\nRemovendo os 3 maiores");
-
-    // for(size_t i = un->size - 1; i > un->size - 3; i--) {
-    //     free(un->array);
-    //     free(un->arraySize);
-    // }
-    // un->size = un->size - 3;
-
-    return un;
+    free(dataSet->samples);
+    free(dataSet);
+    dataSet = NULL;
 }

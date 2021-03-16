@@ -12,11 +12,11 @@ INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CC = gcc
-CFLAGS ?= $(INC_FLAGS) -pedantic -g -Wall -Werror -Wwrite-strings
+CFLAGS ?= $(INC_FLAGS) -pedantic -g -Wall -Werror -Wwrite-strings -O4
 
 VALGRIND ?= valgrind
 VALZIN_FLAGS ?=
-VAL_FLAGS ?= $(VALZIN_FLAGS) --leak-check=full --track-origins=yes
+VAL_FLAGS ?= $(VALZIN_FLAGS) --leak-check=full --track-origins=yes -s
 VALZAO_FLAGS ?= $(VAL_FLAGS) --show-leak-kinds=all
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
@@ -31,6 +31,8 @@ $(BUILD_DIR)/%.c.o: %.c
 clean:
 	$(RM) */*.o */*.d
 
+run: $(TARGET_EXEC)
+	$(BUILD_DIR)/$(TARGET_EXEC) $(ARGS)
 
 valzin: $(TARGET_EXEC)
 	$(VALGRIND) $(VALZIN_FLAGS) $(FLAGS) $(BUILD_DIR)/$(TARGET_EXEC) $(ARGS)

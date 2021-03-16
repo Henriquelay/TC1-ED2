@@ -8,11 +8,11 @@
 #include <string.h>
 #include <stdlib.h>
 
-FILE* openFile(const char* fileName);
+FILE* openFile(const char* fileName, const char* mode);
 char closeFile(FILE* file);
 
-size_t getLineSize(FILE* file, const char* separator, char* buffer, size_t* bufferSize);
+char** readLine(FILE* file, const char *separator, char* buffer, size_t* bufferSize, const size_t* nFeatures);
+size_t getLineSize(FILE* file, const char separator, char* buffer, size_t* bufferSize);
 size_t countLines(FILE* file);
-void** readLine(FILE* file, const char* separator, char* buffer, size_t* bufferSize, const size_t* tokenAmount);
 
 #endif
