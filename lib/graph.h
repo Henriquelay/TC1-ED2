@@ -10,6 +10,6 @@
 #include "./data.h"
 #include "./unionFind.h"
 
-union_t* kruskal(distanceDataSet_t* dataSet, size_t groupsNumber);
+unionCell_t* MST_kruskal(distanceDataSet_t* dataSet, size_t* groupsNumber);
 
 #endif

@@ -5,7 +5,6 @@
 
 int main(int argc, char** argv) {
     char* filename = argv[1];
-    size_t K = strtoul(argv[2], NULL, 10);
     FILE* file = openFile(filename);
     // size_t tokenAmount = getLineSize(file, ",", buffer, &bufferSize);
     // char** tokens = readLine(file, ",", buffer, &bufferSize, &tokenAmount);
@@ -17,17 +16,16 @@ int main(int argc, char** argv) {
 
     dataSet_t* dataPlot = loadData(file, SEPARATOR);
     closeFile(file);
-
-    puts("Loaded dataPlot:");
-    printDataSet(dataPlot);
+    // puts("Loaded dataPlot:");
+    // printDataSet(dataPlot);
 
     // FIXME printing B: in in on first line
     distanceDataSet_t* distanceSet = calculateDistances(dataPlot);
-    puts("Loaded distanceSet:");
-    printDistanceSet(distanceSet);
+    // puts("Loaded distanceSet:");
+    // printDistanceSet(distanceSet);
 
-    union_t * MST = kruskal(distanceSet, K);
-
+    size_t K = strtoul(argv[2], NULL, 10);
+    unionCell_t * MST = MST_kruskal(distanceSet, &K);
 
     // Freeing ids here...
     for (size_t i = 0; i < dataPlot->nElements; i++) {

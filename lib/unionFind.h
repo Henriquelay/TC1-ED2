@@ -6,17 +6,15 @@
 
 #include "./distances.h"
 
-typedef struct union_t {
-    size_t* array;
-    // Array of sizes to calculate weight and balance the insertion
-    size_t* size;
-    // Tie-in to elem
-    distanceSample_t *samples;
-} union_t;
+typedef struct unionCell_t {
+    struct unionCell_t* root;
+    size_t size, id;
+    distanceSample_t* sample;
+} unionCell_t;
 
-union_t* UF_init(const size_t size, distanceSample_t* samples);
-void UF_destroy(union_t* unionStruct);
-size_t UF_find(union_t* unionStruct, size_t index);
-char UF_union(union_t* unionStruct, const size_t p, const size_t q);
+unionCell_t* UF_init(const size_t size, distanceSample_t* samples);
+void UF_destroy(unionCell_t* unionStruct);
+unionCell_t* UF_find(unionCell_t* unionStruct);
+char UF_union(unionCell_t* p, unionCell_t* q);
 
 #endif

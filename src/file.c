@@ -68,7 +68,7 @@ size_t countLines(FILE* file) {
  * Takes an open file, returns an allocated struct with identifier and values
  * Takes a buffer as input to avoid keep re-allocating memory
  * */
-char** readLine(FILE* file, const char *separator, char* buffer, size_t* bufferSize, const size_t* nFeatures) {
+char** readLine(FILE* file, const char* separator, char* buffer, size_t* bufferSize, const size_t* nFeatures) {
     if (getline(&buffer, bufferSize, file) == -1) {
         return NULL;
     }
@@ -85,7 +85,7 @@ char** readLine(FILE* file, const char *separator, char* buffer, size_t* bufferS
     // NOTE - Try removing one of the checks for's second term to gain a bit of time if it works
     for (size_t i = 0; token != NULL; token = strtok(NULL, separator), i++) {
         // Allocates space for data cell
-        tokens[i] = (char*)malloc(sizeof(long double));
+        tokens[i] = (char*)malloc(sizeof(char) * (strlen(token) + 1));
         if (tokens[i] == NULL) {
             perror("Error allocating feature for dataPoint. Exiting");
             exit(1);
