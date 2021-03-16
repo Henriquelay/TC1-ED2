@@ -14,7 +14,8 @@
 #ifndef _DATA_H_
 #define _DATA_H_
 
-#include "./file.h"
+#include "file.h"
+// FIXME didn't work
 
 // "Rows"
 typedef struct sample_t {
@@ -31,7 +32,7 @@ typedef struct dataSet_t {
 } dataSet_t;
 
 dataSet_t* initDataSet(size_t nFeatures, size_t nElements);
-dataSet_t* loadData(FILE* file, const char* separator);
+dataSet_t* loadData(char* filename, const char* separator);
 void printSample(const sample_t* sample, const size_t* nFeatures);
 void printDataSet(dataSet_t* dataSet);
 void destroySample(sample_t* sample);

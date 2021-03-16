@@ -4,8 +4,8 @@
  * Opens file as readonly, checks for errors, exit if any errors, then returns
  * the new file.
  * */
-FILE* openFile(const char* fileName) {
-    FILE* newFile = fopen(fileName, "r");
+FILE* openFile(const char* fileName, const char* mode) {
+    FILE* newFile = fopen(fileName, mode);
     if (newFile == NULL) {
         perror("Error opening file. Exiting");
         exit(1);

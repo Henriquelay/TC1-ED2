@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "./distances.h"
+#include "distances.h"
 
 typedef struct unionCell_t {
     struct unionCell_t* root;

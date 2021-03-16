@@ -5,11 +5,12 @@
 #ifndef _GRAPH_H_
 #define _GRAPH_H_
 
-#define _GNU_SOURCE // Needed to use qsort_r when not using c11 or gnu89/gnu99
+#define _GNU_SOURCE
 
-#include "./data.h"
-#include "./unionFind.h"
+#include "data.h"
+#include "unionFind.h"
 
-unionCell_t* MST_kruskal(distanceDataSet_t* dataSet, size_t* groupsNumber);
+unionCell_t* MST_kruskal(distanceDataSet_t* distanceDataSet, size_t* groupsNumber, unionCell_t** samples, dataSet_t* dataSet);
+void printOutput(char* filename, unionCell_t* MST, dataSet_t* dataSet, size_t* nVertex);
 
 #endif

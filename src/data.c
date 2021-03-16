@@ -18,7 +18,8 @@ dataSet_t* initDataSet(size_t nFeatures, size_t nElements) {
     return dataSet;
 }
 
-dataSet_t* loadData(FILE* file, const char* separator) {
+dataSet_t* loadData(char* filename, const char* separator) {
+    FILE* file = openFile(filename, "r");
     char buffer[BUFSIZE];
     size_t bufferSize = BUFSIZE;
 
@@ -39,17 +40,18 @@ dataSet_t* loadData(FILE* file, const char* separator) {
         }
         free(line);
     }
+    closeFile(file);
 
     return dataSet;
 }
 
 void printSample(const sample_t* sample, const size_t* nFeatures) {
-    printf("%s:", sample->id);
+    //printf("%s:", sample->id);
     for (size_t j = 0; j < *nFeatures; j++) {
         // printf("\t[%ld]", j);
-        printf("\t%Lf", sample->features[j]);
+        //printf("\t%Lf", sample->features[j]);
     }
-    puts("");
+    //puts("");
 }
 
 void printDataSet(dataSet_t* dataSet) {

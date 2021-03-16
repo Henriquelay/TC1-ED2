@@ -49,11 +49,11 @@ distanceDataSet_t* calculateDistances(dataSet_t* locationSet) {
 
 void printDistanceSet(distanceDataSet_t* dataSet) {
     for (size_t i = 0, k = 0; i < dataSet->depth; i++) {
-        printf("%s:", dataSet->samples[k].from->id);
+        //printf("%s:", dataSet->samples[k].from->id);
         for (size_t j = 0; j < i; j++, k++) {
-            printf("\t%Lf", dataSet->samples[k].distance);
+            //printf("\t%Lf", dataSet->samples[k].distance);
         }
-        puts("");
+        //puts("");
     }
 }
 

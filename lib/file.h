@@ -8,7 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-FILE* openFile(const char* fileName);
+FILE* openFile(const char* fileName, const char* mode);
 char closeFile(FILE* file);
 
 char** readLine(FILE* file, const char *separator, char* buffer, size_t* bufferSize, const size_t* nFeatures);

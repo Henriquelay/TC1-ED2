@@ -7,7 +7,7 @@
 
 #include <math.h>
 
-#include "./data.h"
+#include "data.h"
 
 // "Rows"
 typedef struct distanceSample_t {
