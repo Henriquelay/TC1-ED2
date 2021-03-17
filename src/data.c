@@ -6,14 +6,14 @@ dataSet_t* initDataSet(size_t nFeatures, size_t nElements) {
     dataSet_t* dataSet = (dataSet_t*)malloc(sizeof(dataSet_t));
     if (dataSet == NULL) {
         perror("Error allocating new dataSet. Exiting");
-        exit(1);
+        exit(EXIT_FAILURE);
     };
     dataSet->nFeatures = nFeatures;
     dataSet->nElements = nElements;
     dataSet->samples = (sample_t*)malloc(sizeof(sample_t) * dataSet->nElements);
     if (dataSet->samples == NULL) {
         perror("Error allocating new samples. Exiting");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     return dataSet;
 }
@@ -32,7 +32,7 @@ dataSet_t* loadData(char* filename, const char* separator) {
         dataSet->samples[i].features = (long double*)malloc(sizeof(long double) * dataSet->nFeatures);
         if (dataSet->samples == NULL) {
             perror("Error allocating features for new sample. Exiting");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         for (size_t j = 0; j < dataSet->nFeatures; j++) {
             dataSet->samples[i].features[j] = strtold(line[j + 1], NULL);

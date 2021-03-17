@@ -4,14 +4,14 @@ distanceDataSet_t* initDistanceDataSet(size_t nElements) {
     distanceDataSet_t* dataSet = (distanceDataSet_t*)malloc(sizeof(distanceDataSet_t));
     if (dataSet == NULL) {
         perror("Error allocating new dataSet. Exiting");
-        exit(1);
+        exit(EXIT_FAILURE);
     };
     dataSet->depth = nElements;
     dataSet->nElements = (nElements / 2) * (nElements - 1);
     dataSet->samples = (distanceSample_t*)malloc(sizeof(distanceSample_t) * dataSet->nElements);
     if (dataSet->samples == NULL) {
         perror("Error allocating new samples. Exiting");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     return dataSet;
 }

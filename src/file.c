@@ -8,7 +8,7 @@ FILE* openFile(const char* fileName, const char* mode) {
     FILE* newFile = fopen(fileName, mode);
     if (newFile == NULL) {
         perror("Error opening file. Exiting");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     return newFile;
 }
@@ -36,7 +36,7 @@ size_t getLineSize(FILE* file, const char separator, char* buffer, size_t* buffe
     size_t charsRead = 0;
     if ((charsRead = getline(&buffer, bufferSize, file)) == -1) {
         perror("Error getting new line. Exiting");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     fsetpos(file, &previousPosition);  // Restores previous position
 
@@ -76,7 +76,7 @@ char** readLine(FILE* file, const char* separator, char* buffer, size_t* bufferS
     char** tokens = (char**)malloc(sizeof(char*) * (*nFeatures + 1));
     if (tokens == NULL) {
         perror("Error allocating tokens array");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     // Alternativelly, a null pointer may be specified, in which case the function
@@ -88,7 +88,7 @@ char** readLine(FILE* file, const char* separator, char* buffer, size_t* bufferS
         tokens[i] = (char*)malloc(sizeof(char) * (strlen(token) + 1));
         if (tokens[i] == NULL) {
             perror("Error allocating feature for dataPoint. Exiting");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         strcpy(tokens[i], token);
     }

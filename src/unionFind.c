@@ -4,7 +4,7 @@ unionCell_t* UF_init(const size_t size, distanceSample_t* samples) {
     unionCell_t* newStruct = (unionCell_t*)malloc(sizeof(unionCell_t) * size);
     if (newStruct == NULL) {
         perror("Error allocating unionFind struct. Exiting");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     for (size_t i = 0; i < size; i++) {

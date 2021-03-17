@@ -21,7 +21,7 @@ unionCell_t* sortMST(unionCell_t* MST, size_t* inputSize, dataSet_t* dataSet) {
     unionCell_t* finalMST = malloc(sizeof(unionCell_t) * *inputSize);
     if (finalMST == NULL) {
         perror("Error allocating new MST array. Exiting");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     for (size_t i = 0; i < *inputSize; i++) {
         finalMST[i] = MST[i];
