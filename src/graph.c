@@ -15,7 +15,6 @@ int compareUFRoot(const void* a, const void* b, void* dataSet) {
 }
 
 unionCell_t* sortMST(unionCell_t* MST, size_t* inputSize, dataSet_t* dataSet) {
-
     // Creating new array with different sizing (qsort won't stop on nEdges and will sort whole array)
     unionCell_t* finalMST = malloc(sizeof(unionCell_t) * *inputSize);
     if (finalMST == NULL) {
@@ -47,8 +46,6 @@ unionCell_t* MST_kruskal(distanceDataSet_t* distanceDataSet, size_t* K, unionCel
     // Qsorting dataSet, Kruskal needs a sorted set
     qsort(distanceDataSet->samples, distanceDataSet->nElements, sizeof(distanceSample_t), &compareDistanceSamples);
 
-    // size_t nEdges = distanceDataSet->depth - *K + 1;
-
     // 1 group per vertex
     size_t currentGroups = distanceDataSet->depth;
     unionCell_t* un = UF_init(distanceDataSet->nElements, distanceDataSet->samples);
@@ -59,7 +56,7 @@ unionCell_t* MST_kruskal(distanceDataSet_t* distanceDataSet, size_t* K, unionCel
     // }
 
     //puts("MST:");
-    // Not executing K times, don't even need to remove later
+    // Executing at most nElements - K times, don't even need to remove later
     // Sice it's sorted, it's on the 3 largest distances
     for (size_t i = 0; currentGroups != (*K); i++) {
         unionCell_t* p = UF_find(&un[un[i].sample->from->index]), * q = UF_find(&un[un[i].sample->to->index]);
