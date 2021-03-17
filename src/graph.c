@@ -15,7 +15,6 @@ int compareUFRoot(const void* a, const void* b, void* dataSet) {
 }
 
 unionCell_t* sortMST(unionCell_t* MST, size_t* inputSize, dataSet_t* dataSet) {
-    //printf("nEdges: %ld\n", nEdges);
 
     // Creating new array with different sizing (qsort won't stop on nEdges and will sort whole array)
     unionCell_t* finalMST = malloc(sizeof(unionCell_t) * *inputSize);
