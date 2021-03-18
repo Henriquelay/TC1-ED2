@@ -9,7 +9,6 @@
 
 int main(int argc, char** argv) {
     char* filename = argv[1];
-    printf("Opening %s...\n", filename);
     clock_t timeStart = clock();
     clock_t timeRun = timeStart;
     dataSet_t* dataPlot = loadData(filename, SEPARATOR);

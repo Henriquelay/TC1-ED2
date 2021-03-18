@@ -160,10 +160,10 @@ void printOutput(char* filename, unionCell_t* MST, dataSet_t* dataSet, size_t* n
         outMatrix[i] = matrixHeads[i].content;
     }
 
-    // puts("Output matrix possort:");
+    // puts("Output matrix posSort:");
     // for (size_t i = 0; i < *K; i++) {
-    //     printf("Size: %ld\t", roots[i].root->size);
-    //     for (size_t j = 0; j < roots[i].root->size; j++) {
+    //     printf("Size: %ld\t", roots[matrixHeads[i].index].root->size);
+    //     for (size_t j = 0; j < roots[matrixHeads[i].index].root->size; j++) {
     //         printf("%s,", outMatrix[i][j]);
     //     }
     //     puts("");
@@ -172,12 +172,15 @@ void printOutput(char* filename, unionCell_t* MST, dataSet_t* dataSet, size_t* n
     // Writing to file
     FILE* file = openFile(filename, "w");
 
-    // puts("Sorted output matrix:");
+    // puts("Sorted output matrix on printf:");
     for (size_t i = 0; i < *K; i++) {
+        // printf("%s", outMatrix[i][0]);
         fprintf(file, "%s", outMatrix[i][0]);
-        for (size_t j = 1; j < roots[i].root->size; j++) {
+        for (size_t j = 1; j < roots[matrixHeads[i].index].root->size; j++) {
+            // printf(",%s", outMatrix[i][j]);
             fprintf(file, ",%s", outMatrix[i][j]);
         }
+        // printf("\n");
         fprintf(file, "\n");
         free(outMatrix[i]);
     }
