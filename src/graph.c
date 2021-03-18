@@ -68,19 +68,24 @@ unionCell_t* MST_kruskal(distanceDataSet_t* distanceDataSet, size_t* K, dataSet_
     return MST;
 }
 
-// Just to qsort change clusterSize at the same operation
-typedef struct matrixRow_t {
-    char** row;
-    size_t clusterSize;
-} matrixRow_t;
+typedef struct clusterGroup_t {
+    unionCell_t* root;
+    // Not same as id anymore because it has been reordered
+    size_t index;
+} clusterGroup_t;
+
+typedef struct matrixFirst_t {
+    char* content;
+    size_t index;
+} matrixFirst_t;
 
 // Sort lines of the matrix
 int sortOutputMatrix(const void* a, const void* b) {
-    printf("%p %p\n", a, b);
-    char** strA = ((matrixRow_t*)a)->row;
-    char** strB = ((matrixRow_t*)b)->row;
-    int cmp = strcmp(strA[0], strB[0]);
-    printf("Comparing %s and %s = %d", strA[0], strB[0], cmp);
+    char* strA = ((matrixFirst_t*)a)->content;
+    char* strB = ((matrixFirst_t*)b)->content;
+    printf("Comparing %s X %s :\t", strA, strB);
+    int cmp = strcmp(strA, strB);
+    printf("%d\n", cmp);
     return cmp;
 }
 
@@ -91,56 +96,79 @@ void printOutput(char* filename, unionCell_t* MST, dataSet_t* dataSet, size_t* n
     //     printf("[%ld] dist: %Lf\tcluster: %ld\tID: %s\n", i, MST[i].distanceSample->distance, UF_find(&MST[i])->id, MST[i].sample->id);
     // }
 
-    size_t clusterSizes[dataSet->nElements];
+    clusterGroup_t roots[*K];
 
     // Loading cluster sizes
-    clusterSizes[0] = UF_find(&MST[0])->size;
-    for (size_t i = 1, clusterCounter = 1; i < dataSet->nElements; i++) {
+    for (size_t i = 0, clusterCounter = 0; i < dataSet->nElements; i++) {
         // printf("%ld ", i);
-        // New cluster is found
-        if (UF_find(&MST[i])->id != UF_find(&MST[i - 1])->id) {
+        // New cluster root is found
+        if (UF_find(&MST[i]) == &MST[i]) {
             // puts("New cluster found!");
-            clusterSizes[clusterCounter++] = UF_find(&MST[i])->size;
+            roots[clusterCounter].root = UF_find(&MST[i]);
+            roots[clusterCounter++].index = i;
         }
     }
 
-    printf("K = %ld\n", *K);
-    matrixRow_t outMatrix[*K];
-    for (size_t i = 0, acc = 0; i < *K; acc += clusterSizes[i++]) {
-        outMatrix[i].clusterSize = clusterSizes[i];
-        outMatrix[i].row = (char**)malloc(sizeof(char*) * outMatrix[i].clusterSize);
-        if (outMatrix[i].row == NULL) {
-            perror("Error allocating space for output matrix. Exiting");
+    // puts("ClusterRoots:");
+    // for (size_t i = 0; i < *K; i++) {
+    //     printf("[%ld] id: %ld\trootid: %ld\tindex: %ld\tsize:%ld\n", i, roots[i].root->id, roots[i].root->id, roots[i].index, roots[i].root->size);
+    // }
+
+    char** outMatrix[*K];
+    for (size_t i = 0, acc = 0; i < *K; acc += roots[i++].root->size) {
+        outMatrix[i] = (char**)malloc(sizeof(char*) * roots[i].root->size);
+        if (outMatrix[i] == NULL) {
+            perror("Error allocating space for output matrix row. Exiting");
             exit(EXIT_FAILURE);
         }
-        printf("Accumulator = %ld\n", acc);
-        for (size_t j = 0; j < outMatrix[i].clusterSize; j++) {
-            outMatrix[i].row[j] = MST[acc + j].sample->id;
+        for (size_t j = 0; j < roots[i].root->size; j++) {
+            outMatrix[i][j] = MST[acc + j].sample->id;
         }
     }
 
     puts("Output matrix presort:");
     for (size_t i = 0; i < *K; i++) {
-        printf("Size: %ld\t", outMatrix[i].clusterSize);
-        for (size_t j = 0; j < outMatrix[i].clusterSize; j++) {
-            printf("%s,", outMatrix[i].row[j]);
+        printf("Size: %ld\t", roots[i].root->size);
+        for (size_t j = 0; j < roots[i].root->size; j++) {
+            printf("%s,", outMatrix[i][j]);
         }
         puts("");
     }
 
-    qsort(outMatrix, *K, sizeof(matrixRow_t*), &sortOutputMatrix);
+    matrixFirst_t matrixHeads[*K];
+    for(size_t i = 0; i < *K; i++) {
+        matrixHeads[i].content = outMatrix[i][0];
+        matrixHeads[i].index = i;
+    }
 
-    puts("Sorted output matrix:");
+    puts("MatrixHeads:");
+    for(size_t i = 0; i < *K; i++) {
+        printf("[%ld] content: %s\tindex: %ld\n", i, matrixHeads[i].content, matrixHeads[i].index);
+    }
+
+    puts("Inside qsort:");
+    qsort(matrixHeads, *K, sizeof(matrixFirst_t*), &sortOutputMatrix);
+
+    puts("Output matrix possort:");
     for (size_t i = 0; i < *K; i++) {
-        printf("Size: %ld\t", outMatrix[i].clusterSize);
-        for (size_t j = 0; j < outMatrix[i].clusterSize; j++) {
-            printf("%s,", outMatrix[i].row[j]);
+        printf("Size: %ld\t", roots[i].root->size);
+        for (size_t j = 0; j < roots[i].root->size; j++) {
+            printf("%s,", outMatrix[i][j]);
         }
         puts("");
     }
 
-    // Writing to file
-    FILE* file = openFile(filename, "w");
+    // puts("Sorted output matrix:");
+    // for (size_t i = 0; i < *K; i++) {
+    //     printf("Size: %ld\t", outMatrix[i].clusterSize);
+    //     for (size_t j = 0; j < outMatrix[i].clusterSize; j++) {
+    //         printf("%s,", outMatrix[i].row[j]);
+    //     }
+    //     puts("");
+    // }
+
+    // // Writing to file
+    // FILE* file = openFile(filename, "w");
 
 
 
@@ -164,5 +192,5 @@ void printOutput(char* filename, unionCell_t* MST, dataSet_t* dataSet, size_t* n
     //     }
     // }
 
-    closeFile(file);
+    // closeFile(file);
 }
