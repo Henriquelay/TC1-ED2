@@ -10,7 +10,9 @@
 #include "data.h"
 #include "unionFind.h"
 
-unionCell_t* MST_kruskal(distanceDataSet_t* distanceDataSet, size_t* groupsNumber, unionCell_t** samples, dataSet_t* dataSet);
-void printOutput(char* filename, unionCell_t* MST, dataSet_t* dataSet, size_t* nVertex);
+unionCell_t* MST_kruskal(distanceDataSet_t* distanceDataSet, size_t* groupsNumber, dataSet_t* dataSet);
+void printOutput(char* filename, unionCell_t* MST, dataSet_t* dataSet, size_t* nVertex, size_t* K);
+
+unionCell_t* sortSliceAndCompressMST(unionCell_t* MST, size_t* inputSize);
 
 #endif

@@ -9,29 +9,36 @@
 
 int main(int argc, char** argv) {
     char* filename = argv[1];
+    printf("Opening %s...\n", filename);
     clock_t timeStart = clock();
     clock_t timeRun = timeStart;
     dataSet_t* dataPlot = loadData(filename, SEPARATOR);
-    printf("Parsed file in\t\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
+    printf("Parsing input file took\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
     // printDataSet(dataPlot);
 
     timeRun = clock();
     distanceDataSet_t* distanceSet = calculateDistances(dataPlot);
-    printf("Distances calculated in\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
+    printf("Distances calc took\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
     // printDistanceSet(distanceSet);
 
-    size_t K = strtoul(argv[2], NULL, 10);
-    unionCell_t *samples;
+    // Qsorting dataSet, Kruskal needs a sorted set
     timeRun = clock();
-    unionCell_t * MST = MST_kruskal(distanceSet, &K, &samples, dataPlot);
-    printf("MST calculated in\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
-    // puts("Kruskelated:");
+    qsort(distanceSet->samples, distanceSet->nElements, sizeof(distanceSample_t), &compareDistanceSamples);
+    printf("Krukal sorting took\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
+
+    size_t K = strtoul(argv[2], NULL, 10);
+    timeRun = clock();
+    unionCell_t *MST = MST_kruskal(distanceSet, &K, dataPlot);
+    printf("MST calculation took\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
+
+    timeRun = clock();
+    unionCell_t *slicedMST = sortSliceAndCompressMST(MST, &dataPlot->nElements);
+    printf("MST slice & compr. took\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
 
     char* outputFile = argv[3];
     timeRun = clock();
-    printOutput(outputFile, MST, dataPlot, &dataPlot->nElements);
+    printOutput(outputFile, slicedMST, dataPlot, &dataPlot->nElements, &K);
     printf("Outputted to file in\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
-    // puts("Printered:");
 
 
 
@@ -43,7 +50,7 @@ int main(int argc, char** argv) {
     // ...because these doesn't free ID's, the structures reuse the same address
     destroyDataSet(dataPlot);
     destroyDistanceDataSet(distanceSet);
-    UF_destroy(samples);
+    UF_destroy(slicedMST);
     UF_destroy(MST);
     printf("Freed data in\t\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
 

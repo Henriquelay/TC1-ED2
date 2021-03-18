@@ -1,6 +1,6 @@
 #include "../lib/unionFind.h"
 
-unionCell_t* UF_init(const size_t size, distanceSample_t* samples) {
+unionCell_t* UF_init(const size_t size, distanceSample_t* distanceSamples, sample_t* samples) {
     unionCell_t* newStruct = (unionCell_t*)malloc(sizeof(unionCell_t) * size);
     if (newStruct == NULL) {
         perror("Error allocating unionFind struct. Exiting");
@@ -11,6 +11,7 @@ unionCell_t* UF_init(const size_t size, distanceSample_t* samples) {
         newStruct[i].root = NULL;
         newStruct[i].size = 1;
         newStruct[i].id = i;
+        newStruct[i].distanceSample = &distanceSamples[i];
         newStruct[i].sample = &samples[i];
     }
 
@@ -25,6 +26,7 @@ void UF_destroy(unionCell_t* unionStruct) {
 // Return the ancestor
 unionCell_t* UF_find(unionCell_t* unionCell) {
     while (unionCell->root != NULL) {
+        // Not doing this because using pointers, could point to NULL and pass as a root (when it shouldn't)
         // unionStruct[index].root = unionStruct[unionStruct[index].root].root;
         unionCell = unionCell->root;
     }

@@ -5,8 +5,6 @@
 #ifndef _DISTS_H_
 #define _DISTS_H_
 
-#include <math.h>
-
 #include "data.h"
 
 // "Rows"
@@ -26,5 +24,7 @@ typedef struct distanceDataSet_t {
 distanceDataSet_t* calculateDistances(dataSet_t* points);
 void printDistanceSet(distanceDataSet_t* dataSet);
 void destroyDistanceDataSet(distanceDataSet_t* dataSet);
+
+int compareDistanceSamples(const void* a, const void* b);
 
 #endif

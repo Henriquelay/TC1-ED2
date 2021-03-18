@@ -24,14 +24,13 @@ long double euclidianDistance(long double* a, long double* b, size_t* nFeatures)
         // printf("[dim = %ld Val a = %Lf b = %Lf]", *nFeatures, a[i], b[i]);
 
         if (a[i] < b[i]) {
-            accumulator += (b[i] - a[i]) * (b[i] - a[i]);
+            accumulator += (b[i] - a[i]);
         } else {
-            accumulator += (a[i] - b[i]) * (a[i] - b[i]);
+            accumulator += (a[i] - b[i]);
         }
     }
-    long double dist = sqrtl(accumulator);
     // printf(" Dist: %Lf\n", dist);
-    return dist;
+    return accumulator;
 }
 
 distanceDataSet_t* calculateDistances(dataSet_t* locationSet) {
@@ -61,4 +60,11 @@ void destroyDistanceDataSet(distanceDataSet_t* dataSet) {
     free(dataSet->samples);
     free(dataSet);
     dataSet = NULL;
+}
+
+
+int compareDistanceSamples(const void* a, const void* b) {
+    if (((distanceSample_t*)a)->distance < ((distanceSample_t*)b)->distance) return -1;
+    if (((distanceSample_t*)a)->distance > ((distanceSample_t*)b)->distance) return 1;
+    return 0;
 }

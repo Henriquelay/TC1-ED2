@@ -5,13 +5,39 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Testa o trab com a entrada exemplo",
+            "type": "cppdbg",
+            
+            "request": "launch",
+            "program": "${workspaceFolder}/trab1",
+            "args": [
+                "${workspaceFolder}/in-exemplos/exemplo-doc.txt",
+                "3",
+                "out.txt"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "MIMode": "gdb",
+            "externalConsole": false,
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc build project",
+            "miDebuggerPath": "/usr/bin/gdb",
+        },
+        {
             "name": "Testa o trab com a entrada 1",
             "type": "cppdbg",
             
             "request": "launch",
             "program": "${workspaceFolder}/trab1",
             "args": [
-                "${workspaceFolder}/in-exemplos/1.txt"
+                "${workspaceFolder}/in-exemplos/1.txt 2 out.txt"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
