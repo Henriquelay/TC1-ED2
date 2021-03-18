@@ -85,9 +85,9 @@ int sortOutputMatrix(const void* a, const void* b) {
     matrixFirst_t bHead = *(matrixFirst_t*)b;
     char* strA = aHead.content[0];
     char* strB = bHead.content[0];
-    printf("Comparing %s X %s :\t", strA, strB);
+    // printf("Comparing %s X %s :\t", strA, strB);
     int cmp = strcmp(strA, strB);
-    printf("%d\n", cmp);
+    // printf("%d\n", cmp);
     return cmp;
 }
 
@@ -128,17 +128,17 @@ void printOutput(char* filename, unionCell_t* MST, dataSet_t* dataSet, size_t* n
         }
     }
 
-    puts("Output matrix presort:");
-    for (size_t i = 0; i < *K; i++) {
-        printf("Size: %ld\t", roots[i].root->size);
-        for (size_t j = 0; j < roots[i].root->size; j++) {
-            printf("%s,", outMatrix[i][j]);
-        }
-        puts("");
-    }
+    // puts("Output matrix presort:");
+    // for (size_t i = 0; i < *K; i++) {
+    //     printf("Size: %ld\t", roots[i].root->size);
+    //     for (size_t j = 0; j < roots[i].root->size; j++) {
+    //         printf("%s,", outMatrix[i][j]);
+    //     }
+    //     puts("");
+    // }
 
     matrixFirst_t matrixHeads[*K];
-    for(size_t i = 0; i < *K; i++) {
+    for (size_t i = 0; i < *K; i++) {
         matrixHeads[i].content = outMatrix[i];
         matrixHeads[i].index = i;
     }
@@ -148,60 +148,39 @@ void printOutput(char* filename, unionCell_t* MST, dataSet_t* dataSet, size_t* n
     //     printf("[%ld] content: %s\tindex: %ld\n", i, matrixHeads[i].content[0], matrixHeads[i].index);
     // }
 
-    puts("Inside qsort:");
+    // puts("Inside qsort:");
     qsort(matrixHeads, *K, sizeof(matrixFirst_t), &sortOutputMatrix);
 
-    puts("MatrixHeads after sort:");
-    for(size_t i = 0; i < *K; i++) {
-        printf("[%ld] content: %s\tindex: %ld\n", i, matrixHeads[i].content[0], matrixHeads[i].index);
-    }
+    // puts("MatrixHeads after sort:");
+    // for(size_t i = 0; i < *K; i++) {
+    //     printf("[%ld] content: %s\tindex: %ld\n", i, matrixHeads[i].content[0], matrixHeads[i].index);
+    // }
 
-    for(size_t i = 0; i < *K; i++) {
+    for (size_t i = 0; i < *K; i++) {
         outMatrix[i] = matrixHeads[i].content;
     }
 
-    puts("Output matrix possort:");
-    for (size_t i = 0; i < *K; i++) {
-        printf("Size: %ld\t", roots[i].root->size);
-        for (size_t j = 0; j < roots[i].root->size; j++) {
-            printf("%s,", outMatrix[i][j]);
-        }
-        puts("");
-    }
-
-    // puts("Sorted output matrix:");
+    // puts("Output matrix possort:");
     // for (size_t i = 0; i < *K; i++) {
-    //     printf("Size: %ld\t", outMatrix[i].clusterSize);
-    //     for (size_t j = 0; j < outMatrix[i].clusterSize; j++) {
-    //         printf("%s,", outMatrix[i].row[j]);
+    //     printf("Size: %ld\t", roots[i].root->size);
+    //     for (size_t j = 0; j < roots[i].root->size; j++) {
+    //         printf("%s,", outMatrix[i][j]);
     //     }
     //     puts("");
     // }
 
-    // // Writing to file
-    // FILE* file = openFile(filename, "w");
+    // Writing to file
+    FILE* file = openFile(filename, "w");
 
+    // puts("Sorted output matrix:");
+    for (size_t i = 0; i < *K; i++) {
+        fprintf(file, "%s", outMatrix[i][0]);
+        for (size_t j = 1; j < roots[i].root->size; j++) {
+            fprintf(file, ",%s", outMatrix[i][j]);
+        }
+        fprintf(file, "\n");
+        free(outMatrix[i]);
+    }
 
-
-
-
-    // puts("File output:");
-    // Print first one
-    // printf("%s", dataSet->samples[MST[0].id].id);
-    // fprintf(file, "%s", dataSet->samples[MST[0].id].id);
-    // // Print the rest
-    // for (size_t i = 1; i < *nVertex; i++) {
-    //     // Same cluster as previous
-    //     // printf("[%ld] Current cluster: %ld cluster from prev: %ld\n", i, UF_find(&MST[i])->id, UF_find(&MST[i - 1])->id);
-    //     if (UF_find(&MST[i])->id == UF_find(&MST[i - 1])->id) {
-    //         // printf(",%s", dataSet->samples[MST[i].id].id);
-    //         fprintf(file, ",%s", dataSet->samples[MST[i].id].id);
-    //         // Different cluster
-    //     } else {
-    //         // printf("\n%s", dataSet->samples[MST[i].id].id);
-    //         fprintf(file, "\n%s", dataSet->samples[MST[i].id].id);
-    //     }
-    // }
-
-    // closeFile(file);
+    closeFile(file);
 }
