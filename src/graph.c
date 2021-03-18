@@ -75,14 +75,16 @@ typedef struct clusterGroup_t {
 } clusterGroup_t;
 
 typedef struct matrixFirst_t {
-    char* content;
+    char** content;
     size_t index;
 } matrixFirst_t;
 
 // Sort lines of the matrix
 int sortOutputMatrix(const void* a, const void* b) {
-    char* strA = ((matrixFirst_t*)a)->content;
-    char* strB = ((matrixFirst_t*)b)->content;
+    matrixFirst_t aHead = *(matrixFirst_t*)a;
+    matrixFirst_t bHead = *(matrixFirst_t*)b;
+    char* strA = aHead.content[0];
+    char* strB = bHead.content[0];
     printf("Comparing %s X %s :\t", strA, strB);
     int cmp = strcmp(strA, strB);
     printf("%d\n", cmp);
@@ -137,17 +139,26 @@ void printOutput(char* filename, unionCell_t* MST, dataSet_t* dataSet, size_t* n
 
     matrixFirst_t matrixHeads[*K];
     for(size_t i = 0; i < *K; i++) {
-        matrixHeads[i].content = outMatrix[i][0];
+        matrixHeads[i].content = outMatrix[i];
         matrixHeads[i].index = i;
     }
 
-    puts("MatrixHeads:");
-    for(size_t i = 0; i < *K; i++) {
-        printf("[%ld] content: %s\tindex: %ld\n", i, matrixHeads[i].content, matrixHeads[i].index);
-    }
+    // puts("MatrixHeads:");
+    // for(size_t i = 0; i < *K; i++) {
+    //     printf("[%ld] content: %s\tindex: %ld\n", i, matrixHeads[i].content[0], matrixHeads[i].index);
+    // }
 
     puts("Inside qsort:");
-    qsort(matrixHeads, *K, sizeof(matrixFirst_t*), &sortOutputMatrix);
+    qsort(matrixHeads, *K, sizeof(matrixFirst_t), &sortOutputMatrix);
+
+    puts("MatrixHeads after sort:");
+    for(size_t i = 0; i < *K; i++) {
+        printf("[%ld] content: %s\tindex: %ld\n", i, matrixHeads[i].content[0], matrixHeads[i].index);
+    }
+
+    for(size_t i = 0; i < *K; i++) {
+        outMatrix[i] = matrixHeads[i].content;
+    }
 
     puts("Output matrix possort:");
     for (size_t i = 0; i < *K; i++) {
