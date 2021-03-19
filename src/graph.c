@@ -1,5 +1,11 @@
 #include "../lib/graph.h"
 
+typedef struct clusterGroup_t {
+    unionCell_t root;
+    // Not same as id anymore because it has been reordered
+    size_t index;
+} clusterGroup_t;
+
 int sortMSTElements(const void* a, const void* b) {
     unionCell_t* A = ((unionCell_t*)a);
     unionCell_t* B = ((unionCell_t*)b);
@@ -8,7 +14,8 @@ int sortMSTElements(const void* a, const void* b) {
 
     // Checking if same cluster name
     int cmp = strcmp(Aroot->sample->id, Broot->sample->id);
-    // printf("On %s\tX\t %s = %d\n", Aroot->sample->id, Broot->sample->id, cmp);
+    // printf("On %s\tX\t %s\n", A->sample->id, B->sample->id);
+    // printf("Roots %s\tX\t %s = %d\n", Aroot->sample->id, Broot->sample->id, cmp);
     if (cmp != 0) return cmp;
 
     // Comparing sample id if same cluster
@@ -18,32 +25,65 @@ int sortMSTElements(const void* a, const void* b) {
 }
 
 // Also makes a pass on path compression
-unionCell_t* sortMST(unionCell_t* MST, size_t* nVertex) {
+unionCell_t* sortMST(unionCell_t* MST, size_t* nVertex, size_t *K) {
     // Creating new array with different sizing (qsort won't stop on nEdges and will sort whole array)
-    unionCell_t* slicedMST = malloc(sizeof(unionCell_t) * *nVertex);
-    if (slicedMST == NULL) {
-        perror("Error allocating new MST array. Exiting");
-        exit(EXIT_FAILURE);
-    }
+    // unionCell_t* slicedMST = malloc(sizeof(unionCell_t) * *nVertex);
+    // if (slicedMST == NULL) {
+    //     perror("Error allocating new MST array. Exiting");
+    //     exit(EXIT_FAILURE);
+    // }
     // I really don't like slicing allocated arrays. Oh well.
     // <! Getting slice item and doing path compression !>
     // Don't to UF_finds after this point, this is a dirty hack <<
-    for (size_t i = 0; i < *nVertex; i++) {
-        slicedMST[i] = MST[i];
+    // for (si/ze_t i = 0; i < *nVertex; i++) {
+        // slicedMST[i] = MST[i];
         // printf("[%ld] %p\n", i, (void*)root);
         // printf("[%ld] Root antes = %p\t", i, (void*)(slicedMST[i].root != NULL ? slicedMST[i].root->id : 0));
         // printf("[%ld] Root depois = %ld\n", i, slicedMST[i].root->id);
+    // }
+
+    unionCell_t* roots = (unionCell_t*) malloc(sizeof(unionCell_t) * *K);
+    if(roots == NULL) {
+        perror("Erro allocating roots separate vector");
+        exit(EXIT_FAILURE);
+    }
+
+    // Loading cluster roots
+    for (size_t i = 0, clusterCounter = 0; clusterCounter < *K; i++) {
+        // printf("%ld ", i);
+        // New cluster root is found
+        unionCell_t* currentsRoot = UF_find(&MST[i]);
+        if (currentsRoot == &MST[i]) {
+            // puts("New cluster found!");
+            roots[clusterCounter++] = MST[i];
+            // printf("Root %p\n", (void*)roots[clusterCounter].root);
+        // Pointing to root outside
+        }
+    }
+
+    for (size_t i = 0; i < *nVertex; i++) {
+        // printf("%ld ", i);
+        // New cluster root is found
+        unionCell_t* currentsRoot = UF_find(&MST[i]);
+        // If not a root sample
+        // Searches for root in roots array
+        for(size_t j = 0; j < *K; j++) {
+            // Can't compare root address, they're copied
+            if(roots[j].id == currentsRoot->id) {
+                MST[i].root = &roots[j];
+            }
+        }
     }
 
     // Uniting clusters together, not putting them ir order because I can't know where each starts and ends to compare with the first one
-    qsort(slicedMST, *nVertex, sizeof(unionCell_t), &sortMSTElements);
+    qsort(MST, *nVertex, sizeof(unionCell_t), &sortMSTElements);
 
     // puts("After sorting for printing");
-    // for(size_t i = 0; i < *nVertex; i++) {
+    // for (size_t i = 0; i < *nVertex; i++) {
     //     printf("[%ld] %s cluster: %s\n", i, MST[i].sample->id, UF_find(&MST[i])->sample->id);
     // }
 
-    return slicedMST;
+    return roots;
 }
 
 unionCell_t* MST_kruskal(distanceDataSet_t* distanceDataSet, size_t* K, dataSet_t* dataSet) {
@@ -70,22 +110,16 @@ unionCell_t* MST_kruskal(distanceDataSet_t* distanceDataSet, size_t* K, dataSet_
     }
 
     // puts("After Kruskal");
-    // for(size_t i = 0; i < dataSet->nElements; i++) {
+    // for (size_t i = 0; i < dataSet->nElements; i++) {
     //     printf("[%ld] %s cluster: %s\n", i, MST[i].sample->id, UF_find(&MST[i])->sample->id);
     // }
 
     return MST;
 }
 
-typedef struct clusterGroup_t {
-    unionCell_t* root;
-    // Not same as id anymore because it has been reordered
-    size_t index;
-} clusterGroup_t;
-
 typedef struct matrixFirst_t {
     char** content;
-    size_t index;
+    size_t size;
 } matrixFirst_t;
 
 // Sort lines of the matrix
@@ -100,25 +134,25 @@ int sortOutputMatrix(const void* a, const void* b) {
     return cmp;
 }
 
-void printOutput(char* filename, unionCell_t* MST, dataSet_t* dataSet, size_t* nVertex, size_t* K) {
-    clusterGroup_t roots[*K];
+void printOutput(char* filename, unionCell_t* MST, dataSet_t* dataSet, size_t* nVertex, size_t* K, unionCell_t* roots) {
+    
 
     // puts("Sorted:");
     // for(size_t i = 0; i < *nVertex; i++) {
     //     printf("[%ld] %s cluster: %s\n", i, MST[i].sample->id, UF_find(&MST[i])->sample->id);
     // }
 
-    // Loading cluster sizes
-    for (size_t i = 0, clusterCounter = 0; clusterCounter < *K; i++) {
-        // printf("%ld ", i);
-        // New cluster root is found
-        if (UF_find(&MST[i]) == &MST[i]) {
-            // puts("New cluster found!");
-            roots[clusterCounter].root = &MST[i];
-            // printf("Root %p\n", (void*)roots[clusterCounter].root);
-            roots[clusterCounter++].index = i;
-        }
-    }
+    // // Loading cluster sizes
+    // for (size_t i = 0, clusterCounter = 0; clusterCounter < *K; i++) {
+    //     // printf("%ld ", i);
+    //     // New cluster root is found
+    //     if (MST[i].root == NULL) {
+    //         // puts("New cluster found!");
+    //         roots[clusterCounter].root = MST[i];
+    //         // printf("Root %p\n", (void*)roots[clusterCounter].root);
+    //         roots[clusterCounter++].index = i;
+    //     }
+    // }
 
     // puts("ClusterRoots:");
     // for (size_t i = 0; i < *K; i++) {
@@ -127,13 +161,13 @@ void printOutput(char* filename, unionCell_t* MST, dataSet_t* dataSet, size_t* n
 
     // Building matrix to output
     char** outMatrix[*K];
-    for (size_t i = 0, acc = 0; i < *K; acc += roots[i++].root->size) {
-        outMatrix[i] = (char**)malloc(sizeof(char*) * roots[i].root->size);
+    for (size_t i = 0, acc = 0; i < *K; acc += roots[i++].size) {
+        outMatrix[i] = (char**)malloc(sizeof(char*) * roots[i].size);
         if (outMatrix[i] == NULL) {
             perror("Error allocating space for output matrix row. Exiting");
             exit(EXIT_FAILURE);
         }
-        for (size_t j = 0; j < roots[i].root->size; j++) {
+        for (size_t j = 0; j < roots[i].size; j++) {
             outMatrix[i][j] = MST[acc + j].sample->id;
         }
     }
@@ -147,11 +181,11 @@ void printOutput(char* filename, unionCell_t* MST, dataSet_t* dataSet, size_t* n
     //     puts("");
     // }
 
-    // matrixFirst_t matrixHeads[*K];
-    // for (size_t i = 0; i < *K; i++) {
-    //     matrixHeads[i].content = outMatrix[i];
-    //     matrixHeads[i].index = i;
-    // }
+    matrixFirst_t matrixHeads[*K];
+    for (size_t i = 0; i < *K; i++) {
+        matrixHeads[i].content = outMatrix[i];
+        matrixHeads[i].size = roots[i].size;
+    }
 
     // puts("MatrixHeads:");
     // for(size_t i = 0; i < *K; i++) {
@@ -159,16 +193,16 @@ void printOutput(char* filename, unionCell_t* MST, dataSet_t* dataSet, size_t* n
     // }
 
     // puts("Inside qsort:");
-    // qsort(matrixHeads, *K, sizeof(matrixFirst_t), &sortOutputMatrix);
+    qsort(matrixHeads, *K, sizeof(matrixFirst_t), &sortOutputMatrix);
 
     // puts("MatrixHeads after sort:");
     // for(size_t i = 0; i < *K; i++) {
     //     printf("[%ld] content: %s\tindex: %ld\n", i, matrixHeads[i].content[0], matrixHeads[i].index);
     // }
 
-    // for (size_t i = 0; i < *K; i++) {
-    //     outMatrix[i] = matrixHeads[i].content;
-    // }
+    for (size_t i = 0; i < *K; i++) {
+        outMatrix[i] = matrixHeads[i].content;
+    }
 
     // puts("Output matrix posSort:");
     // for (size_t i = 0; i < *K; i++) {
@@ -186,10 +220,10 @@ void printOutput(char* filename, unionCell_t* MST, dataSet_t* dataSet, size_t* n
     // puts("Sorted output matrix on printf:");
     for (size_t i = 0; i < *K; i++) {
         // printf("%s", outMatrix[i][0]);
-        fprintf(file, "%s", outMatrix[i][0]);
-        for (size_t j = 1; j < roots[i].root->size; j++) {
+        fprintf(file, "%s", matrixHeads[i].content[0]);
+        for (size_t j = 1; j < matrixHeads[i].size; j++) {
             // printf(",%s", outMatrix[i][j]);
-            fprintf(file, ",%s", outMatrix[i][j]);
+            fprintf(file, ",%s", matrixHeads[i].content[j]);
         }
         // printf("\n");
         fprintf(file, "\n");

@@ -26,6 +26,8 @@ void UF_destroy(unionCell_t* unionStruct) {
 // Return the ancestor
 unionCell_t* UF_find(unionCell_t* unionCell) {
     while (unionCell->root != NULL) {
+        // printf("Current cell: %ld\n", unionCell->sample->id);
+        if(unionCell->root == unionCell) break;
         // For path compression with pointers
         // if(unionCell == unionCell->root) break;
         // if(unionCell->root->root != NULL) {
@@ -33,6 +35,7 @@ unionCell_t* UF_find(unionCell_t* unionCell) {
         // }
         unionCell = unionCell->root;
     }
+    // puts("");
     return unionCell;
 }
 

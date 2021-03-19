@@ -31,17 +31,18 @@ int main(int argc, char** argv) {
     printf("MST calculation took\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
 
     timeRun = clock();
-    unionCell_t* slicedMST = sortMST(MST, &dataPlot->nElements);
+    // unionCell_t* slicedMST = sortMST(MST, &dataPlot->nElements);
+    unionCell_t* roots = sortMST(MST, &dataPlot->nElements, &K);
     printf("MST slice & compr. took\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
 
     // char* outputFile = argv[3];
     timeRun = clock();
-    printOutput(argv[3], slicedMST, dataPlot, &dataPlot->nElements, &K);
+    printOutput(argv[3], MST, dataPlot, &dataPlot->nElements, &K, roots);
     printf("Outputted to file in\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
 
 
 
-    timeRun = clock();
+    // timeRun = clock();
     // Freeing string identificators here...
     for (size_t i = 0; i < dataPlot->nElements; i++) {
         free(dataPlot->samples[i].id);
@@ -50,8 +51,9 @@ int main(int argc, char** argv) {
     destroyDataSet(dataPlot);
     destroyDistanceDataSet(distanceSet);
     UF_destroy(MST);
-    UF_destroy(slicedMST);
-    printf("Freed data in\t\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
+    free(roots);
+    // UF_destroy(slicedMST);
+    // printf("Freed data in\t\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
 
 
     printf("---------------------------------\nTotal run time\t\t%f seconds\n", (double)(clock() - timeStart)/CLOCKS_PER_SEC);

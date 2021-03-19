@@ -5,6 +5,8 @@
 #ifndef _DISTS_H_
 #define _DISTS_H_
 
+// #include <math.h>
+
 #include "data.h"
 
 // "Rows"
