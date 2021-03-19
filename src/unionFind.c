@@ -26,8 +26,11 @@ void UF_destroy(unionCell_t* unionStruct) {
 // Return the ancestor
 unionCell_t* UF_find(unionCell_t* unionCell) {
     while (unionCell->root != NULL) {
-        // Not doing this because using pointers, could point to NULL and pass as a root (when it shouldn't)
-        // unionStruct[index].root = unionStruct[unionStruct[index].root].root;
+        // For path compression with pointers
+        // if(unionCell == unionCell->root) break;
+        // if(unionCell->root->root != NULL) {
+        //     unionCell->root = unionCell->root->root;
+        // }
         unionCell = unionCell->root;
     }
     return unionCell;

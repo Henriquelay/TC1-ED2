@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
     // Qsorting dataSet, Kruskal needs a sorted set
     timeRun = clock();
     qsort(distanceSet->samples, distanceSet->nElements, sizeof(distanceSample_t), &compareDistanceSamples);
-    printf("Krukal sorting took\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
+    printf("Kruskal sorting took\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
 
     size_t K = strtoul(argv[2], NULL, 10);
     timeRun = clock();
@@ -31,12 +31,12 @@ int main(int argc, char** argv) {
     printf("MST calculation took\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
 
     timeRun = clock();
-    unionCell_t *slicedMST = sortSliceAndCompressMST(MST, &dataPlot->nElements);
+    unionCell_t* slicedMST = sortMST(MST, &dataPlot->nElements);
     printf("MST slice & compr. took\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
 
-    char* outputFile = argv[3];
+    // char* outputFile = argv[3];
     timeRun = clock();
-    printOutput(outputFile, slicedMST, dataPlot, &dataPlot->nElements, &K);
+    printOutput(argv[3], slicedMST, dataPlot, &dataPlot->nElements, &K);
     printf("Outputted to file in\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
 
 
@@ -49,8 +49,8 @@ int main(int argc, char** argv) {
     // ...because these doesn't free ID's, the structures reuse the same address
     destroyDataSet(dataPlot);
     destroyDistanceDataSet(distanceSet);
-    UF_destroy(slicedMST);
     UF_destroy(MST);
+    UF_destroy(slicedMST);
     printf("Freed data in\t\t%f seconds\n", (double)(clock() - timeRun)/CLOCKS_PER_SEC);
 
 
