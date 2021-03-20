@@ -22,8 +22,11 @@ long double euclidianDistance(long double* a, long double* b, size_t* nFeatures)
     // SUM(abs(a - b)^2)
     for (size_t i = 0; i < *nFeatures; i++) {
         // printf("[dim = %ld Val a = %Lf b = %Lf]", *nFeatures, a[i], b[i]);
-
+        if(a[i] > b[i]) {
         accumulator += (a[i] - b[i]);
+        } else {
+        accumulator += (b[i] - a[i]);
+        }
     }
     // printf(" Dist: %Lf\n", dist);
     return accumulator;
