@@ -5,4 +5,4 @@
 Run `make` on project root.
 
 # Usage
-`./trab1 (database file) K (output file)`. There is no input validation: if inputs are exactly as specied on the included document, the program WILL die.
+`./trab1 (database file) K (output file)`. There is no input validation: if inputs aren't exactly as specied on the included document, the program WILL die.
